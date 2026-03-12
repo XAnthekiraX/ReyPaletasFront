@@ -45,6 +45,8 @@ Contains the public website and the admin panel built with React.
 
 /prompts
 
+.env.example
+
 ### Folder Responsibilities
 
 assets  

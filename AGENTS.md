@@ -1,221 +1,196 @@
-# AGENTS.md - Rey Paletas Frontend
+# AGENTS.md - Agentic Coding Guidelines
 
-This file contains guidelines for AI agents working on the frontend repository.
+This file provides guidelines for AI agents working in this repository.
 
 ## Project Overview
 
-- **Type**: React SPA (Single Page Application)
-- **Build Tool**: Vite 7
-- **Styling**: TailwindCSS v4
-- **Language**: JavaScript (JSX)
-- **Routing**: React Router DOM v7
-- **State**: Client-side (cart, session)
-- **Deployment**: Vercel
+- **Project Name**: Rey Paletas Frontend
+- **Tech Stack**: React 19, Vite 7, React Router 7, Tailwind CSS 4
+- **Language**: JavaScript (ES2020+), JSX
 
 ---
 
 ## Commands
 
-### Development
+### Development & Build
 ```bash
-npm run dev        # Start development server
-npm run preview    # Preview production build locally
+npm run dev          # Start Vite dev server
+npm run build        # Production build to dist/
+npm run preview      # Preview production build
 ```
 
-### Build & Lint
+### Linting
 ```bash
-npm run build      # Create production build (dist/)
-npm run lint       # Run ESLint on entire project
-npm run lint -- --fix  # Auto-fix ESLint issues
+npm run lint         # Run ESLint on all files
+npm run lint -- --fix  # Auto-fix linting issues
+npx eslint <file-path> --fix  # Lint specific file
 ```
 
-### Single Test
-No test framework is currently configured. Do not add tests unless explicitly requested.
+**Note**: No test framework is configured. Do not add tests without consulting the user first.
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the root directory (copy from `.env.example`):
+
+```bash
+# Supabase
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+# Google Maps (required for franchise locations)
+VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+
+# Backend API URL (optional)
+VITE_API_URL=http://localhost:3000
+```
+
+**Important:** Never commit `.env` files to version control. Only `.env.example` should be tracked.
 
 ---
 
 ## Code Style Guidelines
 
-### General Rules
-- No comments in code unless explicitly requested by user
-- Use functional components only (no class components)
-- Prefer const over let; avoid var
-- Use strict mode enabled (React StrictMode in main.jsx)
+### File Organization
+```
+src/
+├── components/     # Reusable UI components
+├── pages/          # Route page components
+├── hooks/          # Custom React hooks
+├── services/       # API calls and business logic
+├── utils/          # Helper functions
+├── context/        # React context providers
+└── assets/         # Static assets
+```
+
+### Import Order
+1. React built-ins (`react`, `react-dom`, `react-router-dom`)
+2. External libraries (npm packages)
+3. Internal modules (relative imports)
+4. CSS/style imports
 
 ### Naming Conventions
-- **Components**: PascalCase (e.g., `ProductCard`, `CartSummary`)
-- **Files**: PascalCase for components (e.g., `ProductCard.jsx`), camelCase otherwise
-- **Variables/functions**: camelCase
-- **Constants**: UPPER_SNAKE_CASE
-- **React refs**: `{ name }Ref` pattern (e.g., `inputRef`)
+- **Components**: PascalCase (`UserProfile`, `ProductCard`)
+- **Hooks**: camelCase with `use` prefix (`useAuth`, `useFetch`)
+- **Utilities**: camelCase (`formatDate`)
+- **Constants**: UPPER_SNAKE_CASE (`MAX_UPLOAD_SIZE`)
+- **Files**: kebab-case (`api-client.js`), PascalCase for components
 
-### Imports
-```javascript
-// React core
-import { useState, useEffect } from 'react'
+### JSX Formatting
+- Self-closing tags: `<Component />`
+- Use parentheses for multi-line returns
 
-// External libraries
-import { Link } from 'react-router-dom'
-
-// Local components
-import ProductCard from './components/ProductCard'
-
-// Local utilities
-import { formatPrice } from './utils/format'
-```
-
-Order: React → External → Local (grouped, alphabetized within groups)
-
-### JSX Style
-```javascript
-// Good
-function ProductCard({ product, onAddToCart }) {
+```jsx
+function UserCard({ user, onEdit }) {
   return (
-    <div className="product-card">
-      <img src={product.image} alt={product.name} />
-      <h3>{product.name}</h3>
-      <button onClick={() => onAddToCart(product)}>Add</button>
+    <div className="card">
+      <h2>{user.name}</h2>
+      <Button onClick={onEdit}>Edit</Button>
     </div>
   )
 }
-
-// Avoid unnecessary wrapping divs - use React.Fragment or <>
 ```
 
-### TailwindCSS v4
-- Import in CSS: `@import "tailwindcss";`
-- Use utility classes for all styling
-- Custom theme values via CSS custom properties or Tailwind config
-- Avoid arbitrary values when possible
+### React Hooks
+- Call hooks only at top level
+- Name custom hooks with `use` prefix
+- Use `useCallback` for functions passed as props
 
-### TypeScript
-- Not currently used
-- If needed, add TypeScript support via `npm install typescript @types/react @types/react-dom`
-
-### Error Handling
-- Use try/catch for async operations
-- Display user-friendly error messages in UI
-- Log errors appropriately for debugging
-
-### Component Structure
-```javascript
-// Preferred pattern
-import { useState, useEffect } from 'react'
-
-export default function ComponentName({ prop1, prop2 }) {
-  const [state, setState] = useState(null)
+```jsx
+function useUserData(userId) {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // side effects
-  }, [])
+    fetchUser(userId).then(setUser).finally(() => setLoading(false))
+  }, [userId])
 
-  function handleAction() {
-    // event handlers
-  }
-
-  return (
-    <div>
-      {/* JSX */}
-    </div>
-  )
+  return { user, loading }
 }
 ```
 
----
+### Error Handling
+- Use try-catch for async operations
+- Display user-friendly error messages
 
-## Project Structure
-
-```
-/src
-  /assets       # Static images, media
-  /components   # Reusable UI components
-  /features     # Feature-based modules (products, cart, etc.)
-  /layouts      # Page layouts (public, admin)
-  /pages        # Route pages
-  /routes       # Routing configuration
-  /services     # API communication
-  /store        # Client state (cart, UI)
-  /styles       # Global styles
-  /utils        # Helper functions
-
-/public         # Static public assets
-/docs           # Project documentation
+```jsx
+async function fetchData() {
+  try {
+    const response = await api.get('/data')
+    return response.data
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+    throw new Error('Unable to load data. Please try again.')
+  }
+}
 ```
 
----
+### CSS/Tailwind
+- Use Tailwind utility classes
+- Avoid inline styles
 
-## Architecture
+```jsx
+// Good
+<button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Click</button>
 
-See `docs/ARCHITECTURE.md` for full system architecture details.
-
-### Key Points
-- Public website + Admin panel (via React Router)
-- No authentication on public site; Supabase Auth for admin only
-- Orders generated as WhatsApp messages (not stored in DB)
-- Backend API handles data management; frontend handles display
-
-### Data Flow
-- Public: User → Frontend → Backend API → Supabase
-- Admin: Admin → Frontend → Supabase Auth → Backend API → Supabase
-
----
-
-## Dependencies
-
-### Production
-- react ^19.2.0
-- react-dom ^19.2.0
-- react-router-dom ^7.13.1
-
-### Development
-- vite ^7.3.1
-- @vitejs/plugin-react-swc
-- tailwindcss ^4.2.1
-- @tailwindcss/vite
-- eslint ^9.39.1
-- eslint-plugin-react-hooks
-- eslint-plugin-react-refresh
+// Avoid
+<button style={{ padding: '16px', backgroundColor: 'blue' }}>Click</button>
+```
 
 ---
 
 ## ESLint Configuration
 
-The project uses ESLint with:
-- JavaScript recommended rules
-- React Hooks recommended rules
-- React Refresh plugin
+Uses `@eslint/js`, `eslint-plugin-react-hooks`, and `eslint-plugin-react-refresh`.
 
-Custom rule: `no-unused-vars` set to error, ignoring variables starting with uppercase (intentional for React components)
-
-Run `npm run lint` before committing.
+Key rules:
+- `no-unused-vars`: Errors on unused variables (except those starting with `_`)
+- React hooks rules enforced
+- React refresh enabled for HMR compatibility
 
 ---
 
-## Common Tasks
+## Git Workflow
 
-### Adding a new page
-1. Create component in `/src/pages/`
-2. Add route in `/src/routes/`
-3. Add navigation link in relevant layout/header
-
-### Adding a new component
-1. Create in `/src/components/` or feature folder
-2. Follow component structure guidelines
-3. Use TailwindCSS for styling
-
-### API Integration
-- Add API calls in `/src/services/`
-- Use fetch or axios (axios not installed, use fetch)
-- Handle loading and error states
+- **Commit messages**: Clear, descriptive, start with verb ("Add feature", "Fix bug")
+- **Branch naming**: `feature/`, `fix/`, `refactor/`, `docs/`
 
 ---
 
-## Documentation
+## Common Patterns
 
-- `docs/ARCHITECTURE.md` - System architecture
-- `docs/COMPONENTS.md` - Component specifications
-- `docs/PAGES.md` - Page documentation
-- `docs/ROUTES.md` - Routing details
-- `docs/LAYOUT.md` - Layout documentation
-- `docs/DATA.md` - Data models
-- `docs/FRONTEND.md` - Frontend overview
+### Conditional Rendering
+```jsx
+{isLoading && <Spinner />}
+{error && <ErrorMessage message={error} />}
+{data && <DataDisplay data={data} />}
+```
+
+### List Rendering
+```jsx
+{items.map(item => (
+  <ItemCard key={item.id} item={item} />
+))}
+```
+
+### Form Handling
+```jsx
+const [formData, setFormData] = useState({})
+
+function handleChange(e) {
+  const { name, value } = e.target
+  setFormData(prev => ({ ...prev, [name]: value }))
+}
+```
+
+---
+
+## When to Ask the User
+
+Before making significant changes, consult the user about:
+- Adding new dependencies
+- Setting up testing frameworks
+- Architectural changes
+- API modifications
+- New feature implementations affecting multiple files

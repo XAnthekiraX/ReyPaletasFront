@@ -20,8 +20,10 @@ Additional libraries may include:
 
 React Router → routing  
 @iconify/react → UI icons  
-react-google-maps → location display
+@react-google-maps/api → map display for franchise locations
 motion → animations
+
+Note: Google Maps requires a valid API key with Maps JavaScript API enabled.
 
 ---
 

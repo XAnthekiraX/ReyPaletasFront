@@ -14,7 +14,7 @@ The system includes:
 - Public website for customers and partners
 - Product catalog
 - Franchise information
-- Future products section
+- Products not yet available (via `exists = false`)
 - Announcements
 - Shopping cart that generates WhatsApp orders
 - Admin panel for content management
@@ -36,7 +36,7 @@ Responsibilities:
 
 - Show company information
 - Display products
-- Show future products
+- Show products not yet available (via `exists = false`)
 - Present franchise opportunities
 - Display announcements
 - Allow users to create an order and send it via WhatsApp
@@ -48,7 +48,7 @@ Accessible only to authenticated administrators.
 Responsibilities:
 
 - Manage products
-- Manage future products
+- Manage products (including unavailable products via `exists = false`)
 - Manage franchises
 - Manage announcements
 
@@ -121,8 +121,7 @@ Responsibilities:
 
 Store business data:
 
-- products
-- future_products
+- products (with `exists` flag to mark unavailable products)
 - franchises
 - announcements
 
