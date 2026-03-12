@@ -39,14 +39,60 @@ Create a `.env` file in the root directory (copy from `.env.example`):
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 
-# Google Maps (required for franchise locations)
-VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
-
 # Backend API URL (optional)
 VITE_API_URL=http://localhost:3000
 ```
 
 **Important:** Never commit `.env` files to version control. Only `.env.example` should be tracked.
+
+---
+
+## Map Component (React Leaflet)
+
+This project uses **React Leaflet** for maps (previously react-google-maps). No Google Maps API key required.
+
+### Installation
+```bash
+npm install leaflet react-leaflet
+```
+
+### Basic Map Component Example
+```jsx
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+
+const position = [51.505, -0.09]
+
+function MapView({ lat, lng }) {
+  const mapPosition = [lat, lng]
+
+  return (
+    <MapContainer 
+      center={mapPosition} 
+      zoom={13} 
+      scrollWheelZoom={false}
+      className="h-full w-full"
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Marker position={mapPosition}>
+        <Popup>
+          A pretty CSS3 popup. <br /> Easily customizable.
+        </Popup>
+      </Marker>
+    </MapContainer>
+  )
+}
+
+export default MapView
+```
+
+### Important Notes
+- Import Leaflet CSS in the component: `import 'leaflet/dist/leaflet.css'`
+- Fix Leaflet marker icon issue in React by importing marker icons manually
+- Use OpenStreetMap tiles (free, no API key needed)
 
 ---
 
