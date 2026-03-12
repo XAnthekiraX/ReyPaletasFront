@@ -74,7 +74,7 @@ Responsibilities:
 
 - display company information
 - show product catalog
-- show future products
+- show products not yet available (via `exists = false`)
 - display franchise information
 - show announcements
 - allow users to create a cart
@@ -89,7 +89,7 @@ Accessible only to authenticated administrators.
 Responsibilities:
 
 - manage products
-- manage future products
+- manage products (including unavailable products via `exists = false`)
 - manage franchises
 - manage announcements
 
@@ -241,3 +241,120 @@ UI components should not contain business logic.
 
 Service Abstraction  
 All backend communication should go through services.
+
+## Public Endpoints (Accessible without authentication)
+
+### 1. Get Products by Category
+
+**Endpoint:**
+
+GET /public/products
+
+**Query Parameters:**  
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| category | string | yes | Name of the category to filter products |
+| available | boolean | no | Filter by availability: `true` = available products, `false` = future products. Default: `true` |
+
+**Response:**
+
+- Products in the specified category
+- Includes variants if `price_varies = true`
+- Omits all IDs
+- Fields: `name`, `price`, `image_url`, `variants`
+
+**Example:**
+
+GET /public/products?category=Chocolates&available=true
+
+---
+
+## Private Endpoints (Admin Panel, requires authentication)
+
+### 1. Login
+
+**Endpoint:**
+
+POST /public/login
+
+**Body:**
+
+```json
+{
+  "email": "admin@example.com",
+  "password": "securepassword"
+}
+```
+
+Response:
+
+Authentication token for admin panel
+
+### Categories
+
+Endpoints:
+
+GET /categories
+
+POST /categories
+
+PUT /categories/:id
+
+DELETE /categories/:id 3.
+
+### Products
+
+Endpoints:
+
+GET /products
+
+POST /products
+
+PUT /products/:id
+
+DELETE /products/:id 4.
+
+### Product Variants
+
+Endpoints:
+
+GET /product_variants
+
+POST /product_variants
+
+PUT /product_variants/:id
+
+DELETE /product_variants/:id 5.
+
+### Announcements
+
+Endpoints:
+
+GET /announcements
+
+POST /announcements
+
+PUT /announcements/:id
+
+DELETE /announcements/:id
+
+### Franchises
+
+Endpoints:
+
+GET /franchises
+POST /franchises
+PUT /franchises/:id
+DELETE /franchises/:id
+
+#### Notes for Frontend:
+
+Use public endpoints for main website (no login required).
+
+Use private endpoints for admin panel (authentication token required).
+
+Query parameters and response structure are described in BUSINESS_LOGIC.md.
+
+```
+
+```

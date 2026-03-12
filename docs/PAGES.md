@@ -52,7 +52,7 @@ Purpose:
 
 Data source:
 
-future_products
+products where `exists = false`
 
 ---
 
@@ -87,14 +87,7 @@ Displays product categories as a secondary navigation menu.
 
 Categories:
 
-Chocolates  
-Cremosas  
-Especiales  
-Paletitas  
-De Hielo  
-De Sal  
-Bebidas  
-Otros
+Categories are dynamically fetched from the backend via the `/categories` endpoint.
 
 Purpose:
 

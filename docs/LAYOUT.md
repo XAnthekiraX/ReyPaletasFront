@@ -43,12 +43,12 @@ Navigation Menu
 
 Navigation links:
 
-Inicio  
+Home  
 Sabores  
-Quienes Somos  
-Puntos de Venta  
-Franquicias  
-Contactanos
+About Us  
+Sales Points  
+Franchises  
+Contact
 
 The header should remain consistent across all public pages.
 

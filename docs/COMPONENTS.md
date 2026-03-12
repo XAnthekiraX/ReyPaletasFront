@@ -145,14 +145,7 @@ Allow users to filter products by category.
 
 Categories
 
-Chocolates  
-Cremosas  
-Especiales  
-Paletitas  
-De Hielo  
-De Sal  
-Bebidas  
-Otros
+Categories are dynamically fetched from the backend via the `/categories` endpoint.
 
 Responsibilities
 
