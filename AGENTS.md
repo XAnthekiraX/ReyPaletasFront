@@ -194,3 +194,30 @@ Before making significant changes, consult the user about:
 - Architectural changes
 - API modifications
 - New feature implementations affecting multiple files
+
+---
+
+## Installed Skills
+
+The following skills are available for this project. Use them when working on specific tasks:
+
+### vercel-react-best-practices
+**When to use:** When building React components, implementing state management, optimizing performance, or following React/Next.js conventions.
+
+### tailwind-design-system
+**When to use:** When creating reusable UI components, designing layouts, or establishing a consistent design system with Tailwind CSS.
+
+### shadcn-ui
+**When to use:** When building accessible, composable UI components. Provides patterns for creating components similar to shadcn/ui primitives.
+
+### javascript-typescript-jest
+**When to use:** When writing tests for frontend functionality. Note: No test framework is currently configured.
+
+---
+
+## Skill Usage Guidelines
+
+- **vercel-react-best-practices**: React performance optimization, hooks usage, component patterns
+- **tailwind-design-system**: Tailwind CSS organization, design tokens, responsive layouts
+- **shadcn-ui**: Component architecture, accessibility, composable UI patterns
+- **javascript-typescript-jest**: Testing patterns, test structure, mocking strategies
