@@ -357,6 +357,19 @@ Use private endpoints for admin panel (authentication token required).
 
 Query parameters and response structure are described in BUSINESS_LOGIC.md.
 
-```
+### Google Maps Integration Guide
 
-```
+#### Tech Stack
+
+- **Library:** `@react-google-maps/api` is used for rendering interactive maps.
+- **Infrastructure Requirement:** A **Google Cloud API Key** with "Maps JavaScript API" enabled is required.
+
+#### Franchise Implementation
+
+The integration focuses on the `/franquicias` page using the `FranchiseMap` component.
+
+- **Data Flow:** The map receives coordinates from the Supabase database (fields `latitude` and `longitude`).
+- **Validation Rules:** To ensure marker accuracy, coordinates must comply with:
+  - Latitude: between -90 and 90.
+  - Longitude: between -180 and 180.
+- **Interaction:** The map dynamically updates based on the city selected in `CityTabs`, showing specific markers for each franchise location.

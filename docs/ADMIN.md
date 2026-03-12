@@ -16,7 +16,18 @@ The admin panel allows administrators to manage the website content. It is only 
 
 ### Session Management
 
-- Verify authentication on each admin route
+- Verify authentication on
+
+Separation of areas  
+Public routes and admin routes must be clearly separated.
+
+Protected admin routes  
+All admin routes must verify authentication.
+
+Client side routing  
+Routing is handled by React Router.
+each admin route
+
 - Redirect to `/admin/login` if no session exists
 - Show logout button in the admin layout
 
@@ -289,3 +300,25 @@ DELETE /franchises/:id
 - longitude: required, -180 to 180
 - manager_name: required
 - manager_photo: required, valid URL
+
+### Admin Panel Functionality Details
+
+#### Navigation Structure and Pages
+
+The admin panel is protected by **Supabase Auth** and all routes under `/admin/*` verify the active session.
+
+- **Dashboard (`/admin`):** Main screen with summary cards showing total products, franchises, and active announcements.
+- **Products Management (`/admin/productos`):**
+  - **List View:** Table with image, name, price, category, and availability status.
+  - **Actions:** Full CRUD (Create, Edit, Delete) with toggle for immediate availability change.
+  - **Variants:** Support for products with variable prices (e.g., beverages) via a variants section in the form.
+- **Categories Management (`/admin/categorias`):** Allows managing categories that filter the public catalog, showing product count for each.
+- **Announcements Management (`/admin/avisos`):** Home promotions control with activate/deactivate toggle option.
+- **Franchises Management (`/admin/franquicias`):** Organization of locations by city in a card grid with preview.
+
+#### UI Components
+
+The panel uses modular components with integrated validation:
+
+- **Forms:** Inputs with labels, text areas, dropdown selects, and image uploads with preview.
+- **Feedback:** Toast notifications to confirm success or report API errors, and loading states (spinners).
