@@ -96,6 +96,55 @@ export default MapView
 
 ---
 
+## Routing (React Router)
+
+Routes should be defined in `App.jsx` with different layouts for public website and admin panel.
+
+### Route Structure Example
+```jsx
+import { Routes, Route } from 'react-router-dom'
+import PublicLayout from './components/layouts/PublicLayout'
+import AdminLayout from './components/layouts/AdminLayout'
+import Home from './pages/Home'
+import Menu from './pages/Menu'
+import Shop from './pages/Shop'
+import AdminDashboard from './pages/admin/Dashboard'
+import AdminProducts from './pages/admin/Products'
+
+function App() {
+  return (
+    <Routes>
+      {/* Public routes with public layout */}
+      <Route element={<PublicLayout />}>
+        <Route path='/' element={<Home />} />
+        <Route path='/menu' element={<Menu />} />
+        <Route path='/shop' element={<Shop />} />
+        <Route path='/contact' element={<Contact />} />
+        <Route path='/locations' element={<Locations />} />
+      </Route>
+
+      {/* Admin routes with admin layout */}
+      <Route path='/admin' element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path='products' element={<AdminProducts />} />
+        <Route path='orders' element={<AdminOrders />} />
+        <Route path='settings' element={<AdminSettings />} />
+      </Route>
+    </Routes>
+  )
+}
+
+export default App
+```
+
+### Key Points
+- Use `Route` component with `element` prop for the component
+- Wrap related routes in a Layout component for shared navigation/footer
+- Public and admin layouts should be completely separate
+- Admin routes typically start with `/admin` prefix
+
+---
+
 ## Code Style Guidelines
 
 ### File Organization
