@@ -3,8 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import SVG from "../assets/logo.svg?react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'motion/react'
-import { a, div, p } from 'motion/react-client';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify/react'
 const socialNetworks = [
   {
     link: "https://www.facebook.com/reypaletas.ecu/",
@@ -173,7 +172,7 @@ function Footer() {
             <h3 className="text-lg font-semibold mb-4">EXPLORAR</h3>
             <div className='grid grid-cols-3 lg:grid-cols-2 gap-1 lg:2.5'>
               {
-                navLinks.map((nav, index) => {
+                navLinks.map((nav) => {
                   return (
                     <Link to={nav.path}>{nav.name}</Link>
                   )

@@ -92,8 +92,13 @@ export const privateAuthApi = {
 
 // Public data endpoints
 export const publicApi = {
-  getProducts: (categoryId, available = true) => 
-    api.getPublic(`/public/products?category_id=${categoryId}&available=${available}`),
+  getProducts: (categoryId = null, available = true) => {
+    let endpoint = '/public/products?'
+    const params = []
+    if (categoryId) params.push(`category_id=${categoryId}`)
+    params.push(`available=${available}`)
+    return api.getPublic(endpoint + params.join('&'))
+  },
   
   getCategories: () => api.getPublic('/public/categories'),
   
@@ -104,7 +109,7 @@ export const publicApi = {
   
   getAnnouncements: (active = true) => 
     api.getPublic(`/public/announcements?active=${active}`),
-  
+
   sendContact: (data) => api.postPublic('/public/contact', data),
 }
 
