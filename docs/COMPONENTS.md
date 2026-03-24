@@ -332,3 +332,158 @@ Responsibilities
 
 initiate order creation  
 redirect user to WhatsApp
+
+---
+
+# Admin Components
+
+## AdminSidebar
+
+Used in all admin pages.
+
+Purpose
+
+Provide navigation within the admin panel.
+
+Structure
+
+Logo  
+Navigation Links: Dashboard, Products, Categories, Announcements, Franchises, Logout
+
+Responsibilities
+
+navigate between admin sections  
+show active section indicator  
+provide logout action
+
+---
+
+## AdminHeader
+
+Used in all admin pages.
+
+Purpose
+
+Display page title and user information.
+
+Structure
+
+Page Title  
+User Avatar/Email  
+Logout Button
+
+Responsibilities
+
+show current page context  
+display user session info  
+allow logout
+
+---
+
+## AdminTable
+
+Used in list views (Products, Categories, Announcements, Franchises).
+
+Purpose
+
+Display data in tabular format with actions.
+
+Structure
+
+Table Headers  
+Table Rows  
+Action Buttons (Edit, Delete)  
+Pagination
+
+Responsibilities
+
+render data rows  
+enable sorting/filtering  
+provide row actions
+
+---
+
+## AdminForm
+
+Used in create/edit pages.
+
+Purpose
+
+Handle form data for CRUD operations.
+
+Structure
+
+Input Fields  
+Validation Messages  
+Submit Button  
+Cancel Button
+
+Responsibilities
+
+capture form input  
+validate data  
+submit to API  
+handle errors
+
+---
+
+## AdminCard
+
+Used in dashboard and franchise management.
+
+Purpose
+
+Display summary information or grid items.
+
+Structure
+
+Title  
+Content  
+Action Buttons
+
+Responsibilities
+
+present condensed information  
+enable quick actions
+
+---
+
+## ToggleSwitch
+
+Used in list views for status toggles.
+
+Purpose
+
+Toggle between active/inactive states.
+
+Structure
+
+Switch Component  
+Label
+
+Responsibilities
+
+toggle boolean values  
+provide visual feedback
+
+---
+
+## ImageUpload
+
+Used in product and franchise forms.
+
+Purpose
+
+Handle image URL input with preview.
+
+Structure
+
+URL Input  
+Image Preview  
+Remove Button
+
+Responsibilities
+
+accept image URLs  
+show preview  
+allow removal

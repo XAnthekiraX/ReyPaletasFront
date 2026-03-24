@@ -48,7 +48,6 @@ Accessible only to authenticated administrators.
 Responsibilities:
 
 - Manage products
-- Manage products (including unavailable products via `exists = false`)
 - Manage franchises
 - Manage announcements
 

@@ -125,6 +125,31 @@ Operations:
 
 ---
 
+/admin/categorias
+
+Manage product categories.
+
+Operations:
+
+- create category
+- edit category
+- delete category
+
+---
+
+/admin/productos-futuros
+
+Manage products not yet available (exists = false).
+
+Operations:
+
+- create future product
+- edit future product
+- delete future product
+- toggle to make available
+
+---
+
 # 4. Routing Principles
 
 Clear route naming  

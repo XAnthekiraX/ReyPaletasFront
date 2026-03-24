@@ -187,3 +187,7 @@ Photo of the franchise manager.
 description
 
 Short description of the franchise location.
+
+gallery
+
+Array of image URLs showing the franchise location photos.

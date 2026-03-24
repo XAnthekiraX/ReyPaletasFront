@@ -20,10 +20,8 @@ Additional libraries may include:
 
 React Router → routing  
 @iconify/react → UI icons  
-@react-google-maps/api → map display for franchise locations
+leaflet + react-leaflet → map display for franchise locations  
 motion → animations
-
-Note: Google Maps requires a valid API key with Maps JavaScript API enabled.
 
 ---
 
@@ -81,19 +79,6 @@ Responsibilities:
 - show announcements
 - allow users to create a cart
 - generate WhatsApp orders
-
----
-
-## Admin Panel
-
-Accessible only to authenticated administrators.
-
-Responsibilities:
-
-- manage products
-- manage products (including unavailable products via `exists = false`)
-- manage franchises
-- manage announcements
 
 Authentication is handled using Supabase Auth.
 
@@ -296,58 +281,46 @@ Authentication token for admin panel
 
 Endpoints:
 
-GET /categories
-
-POST /categories
-
-PUT /categories/:id
-
-DELETE /categories/:id 3.
+- GET /categories
+- POST /categories
+- PUT /categories/:id
+- DELETE /categories/:id
 
 ### Products
 
 Endpoints:
 
-GET /products
-
-POST /products
-
-PUT /products/:id
-
-DELETE /products/:id 4.
+- GET /products
+- POST /products
+- PUT /products/:id
+- DELETE /products/:id
 
 ### Product Variants
 
 Endpoints:
 
-GET /product_variants
-
-POST /product_variants
-
-PUT /product_variants/:id
-
-DELETE /product_variants/:id 5.
+- GET /product-variants?product_id=:id
+- POST /product-variants
+- PUT /product-variants/:id
+- DELETE /product-variants/:id
 
 ### Announcements
 
 Endpoints:
 
-GET /announcements
-
-POST /announcements
-
-PUT /announcements/:id
-
-DELETE /announcements/:id
+- GET /announcements
+- POST /announcements
+- PUT /announcements/:id
+- DELETE /announcements/:id
 
 ### Franchises
 
 Endpoints:
 
-GET /franchises
-POST /franchises
-PUT /franchises/:id
-DELETE /franchises/:id
+- GET /franchises
+- POST /franchises
+- PUT /franchises/:id
+- DELETE /franchises/:id
 
 #### Notes for Frontend:
 
@@ -357,12 +330,12 @@ Use private endpoints for admin panel (authentication token required).
 
 Query parameters and response structure are described in BUSINESS_LOGIC.md.
 
-### Google Maps Integration Guide
+### React Leaflet Integration Guide
 
 #### Tech Stack
 
-- **Library:** `@react-google-maps/api` is used for rendering interactive maps.
-- **Infrastructure Requirement:** A **Google Cloud API Key** with "Maps JavaScript API" enabled is required.
+- **Libraries:** `leaflet` + `react-leaflet` for rendering interactive maps.
+- **Infrastructure Requirement:** None required - uses OpenStreetMap tiles (free).
 
 #### Franchise Implementation
 
@@ -371,5 +344,5 @@ The integration focuses on the `/franquicias` page using the `FranchiseMap` comp
 - **Data Flow:** The map receives coordinates from the Supabase database (fields `latitude` and `longitude`).
 - **Validation Rules:** To ensure marker accuracy, coordinates must comply with:
   - Latitude: between -90 and 90.
-  - Longitude: between -180 and 180.
+  - Longitude: between -180 to 180.
 - **Interaction:** The map dynamically updates based on the city selected in `CityTabs`, showing specific markers for each franchise location.

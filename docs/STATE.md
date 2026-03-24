@@ -276,28 +276,3 @@ setName('new')
 setAge(25)
 setEmail('test@test.com')
 ```
-
----
-
-## Testing Considerations
-
-### State Shapes
-
-Keep states predictable and documented.
-
-### Reset State
-
-```javascript
-// Reset form
-function resetForm() {
-  setValues(initialValues)
-  setErrors({})
-  setTouched({})
-}
-```
-
-### Error Boundaries
-
-- Catch state errors
-- Show fallback UI
-- Allow recovery
