@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from 'motion/react'
 
 const navLinks = [
   { name: 'Inicio', path: '/' },
@@ -11,6 +14,7 @@ const navLinks = [
 
 function Header() {
   const location = useLocation()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
     <header className="bg-white shadow-sm">
@@ -21,6 +25,7 @@ function Header() {
               Rey Paletas
             </Link>
           </div>
+
           <nav className="hidden md:flex space-x-8">
             {navLinks.map((link) => (
               <Link
@@ -30,19 +35,85 @@ function Header() {
                   location.pathname === link.path
                     ? 'text-primary'
                     : 'text-gray-700 hover:text-primary'
-                } px-3 py-2 text-sm font-medium`}
+                } px-3 py-2 text-sm font-medium transition-colors`}
               >
                 {link.name}
               </Link>
             ))}
           </nav>
-          <Link
-            to="/compras"
-            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors"
-          >
-            Carrito
-          </Link>
+
+          <div className="flex items-center gap-4">
+            <Link
+              to="/compras"
+              className="hidden md:inline-flex bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium"
+            >
+              Carrito
+            </Link>
+
+            <motion.button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+              aria-label="Toggle menu"
+              whileTap={{ scale: 0.95 }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </motion.button>
+          </div>
         </div>
+
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden overflow-hidden"
+            >
+              <nav className="flex flex-col space-y-2 py-4">
+                {navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.path}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Link
+                      to={link.path}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`${
+                        location.pathname === link.path
+                          ? 'text-primary bg-primary/5'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      } px-3 py-2 rounded-md text-sm font-medium block`}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: navLinks.length * 0.05 }}
+                >
+                  <Link
+                    to="/compras"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium text-center mt-2 block"
+                  >
+                    Carrito
+                  </Link>
+                </motion.div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   )
@@ -65,9 +136,27 @@ function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Síguenos</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-primary">Instagram</a>
-              <a href="#" className="text-gray-300 hover:text-primary">Facebook</a>
-              <a href="#" className="text-gray-300 hover:text-primary">WhatsApp</a>
+              <motion.a 
+                href="#" 
+                className="text-gray-300 hover:text-primary transition-colors"
+                whileHover={{ scale: 1.1, y: -2 }}
+              >
+                Instagram
+              </motion.a>
+              <motion.a 
+                href="#" 
+                className="text-gray-300 hover:text-primary transition-colors"
+                whileHover={{ scale: 1.1, y: -2 }}
+              >
+                Facebook
+              </motion.a>
+              <motion.a 
+                href="#" 
+                className="text-gray-300 hover:text-primary transition-colors"
+                whileHover={{ scale: 1.1, y: -2 }}
+              >
+                WhatsApp
+              </motion.a>
             </div>
           </div>
         </div>

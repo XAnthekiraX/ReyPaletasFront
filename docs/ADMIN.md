@@ -2,7 +2,7 @@
 
 ## Overview
 
-The admin panel allows administrators to manage the website content. It is only accessible via Supabase Auth authentication.
+The admin panel allows administrators to manage the website content. It is only accessible via JWT authentication with refresh tokens.
 
 ---
 
@@ -11,24 +11,31 @@ The admin panel allows administrators to manage the website content. It is only 
 ### Login
 
 - **Route**: `/admin/login`
-- **Method**: Supabase Auth credentials
-- **Protection**: All `/admin/*` routes require an active session
+- **Method**: Backend API with JWT tokens
+- **Protection**: All `/admin/*` routes require a valid access token
+
+### Endpoints
+
+```
+POST /public/login
+Body: { "email": "admin@email.com", "password": "..." }
+Response: { "access_token": "...", "refresh_token": "...", "expires_in": 3600, "user": { "email": "..." } }
+
+POST /private/auth/refresh-token
+Headers: Authorization: Bearer <access_token>
+Body: { "refresh_token": "..." }
+Response: { "status": "success", "data": { "access_token": "...", "refresh_token": "...", "expires_in": 3600 } }
+
+GET /auth/me
+Headers: Authorization: Bearer <access_token>
+Response: { "email": "admin@email.com" }
+```
 
 ### Session Management
 
-- Verify authentication on
-
-Separation of areas  
-Public routes and admin routes must be clearly separated.
-
-Protected admin routes  
-All admin routes must verify authentication.
-
-Client side routing  
-Routing is handled by React Router.
-each admin route
-
-- Redirect to `/admin/login` if no session exists
+- Verify token on each admin route
+- Auto-refresh token when it expires
+- Redirect to `/admin/login` if no valid session
 - Show logout button in the admin layout
 
 ---

@@ -149,13 +149,13 @@ isModalOpen(modalName)
 {
   user: {
     id: string,
-    email: string,
-    role: 'admin' | null
+    email: string
   } | null,
   session: {
     access_token: string,
     refresh_token: string,
-    expires_at: number
+    expires_in: number,
+    expires_at: number // calculated from expires_in
   } | null,
   isAuthenticated: boolean,
   isLoading: boolean
@@ -171,6 +171,9 @@ async function login(email, password)
 // Logout
 async function logout()
 
+// Refresh token
+async function refreshToken()
+
 // Check auth status
 async function checkAuth()
 
@@ -180,10 +183,14 @@ function getCurrentUser()
 
 ### Persistence
 
-- Session managed by Supabase Auth
-- Persistence configured in Supabase client
-- Verify session on app load
-- Redirect if session expired
+- Tokens stored in `localStorage` with keys:
+  - `rey_paletas_access_token`
+  - `rey_paletas_refresh_token`
+  - `rey_paletas_user`
+  - `rey_paletas_token_expires_at`
+- Load tokens on app initialization
+- Auto-refresh when token is about to expire
+- Clear all auth data on logout
 
 ---
 

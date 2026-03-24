@@ -80,7 +80,7 @@ Responsibilities:
 - allow users to create a cart
 - generate WhatsApp orders
 
-Authentication is handled using Supabase Auth.
+Authentication is handled using JWT tokens with refresh token flow.
 
 Admin routes must be protected.
 
@@ -207,11 +207,18 @@ Flow:
 
 User login  
 ↓  
-Supabase Auth session  
+Backend JWT tokens (access_token + refresh_token)  
 ↓  
-Protected admin routes
+Protected admin routes (auto-refresh on expiry)
 
-Unauthorized users must be redirected.
+Unauthorized users must be redirected to `/admin/login`.
+
+### Token Management
+
+- Store tokens in localStorage
+- Include in headers: `Authorization: Bearer <access_token>`
+- Auto-refresh when token expires (before expires_in time)
+- Clear tokens on logout
 
 ---
 
@@ -258,24 +265,28 @@ GET /public/products?category=Chocolates&available=true
 
 ## Private Endpoints (Admin Panel, requires authentication)
 
-### 1. Login
+All private endpoints require header: `Authorization: Bearer <access_token>`
 
-**Endpoint:**
+### Authentication
 
-POST /public/login
-
-**Body:**
-
+**POST /public/login**
 ```json
-{
-  "email": "admin@example.com",
-  "password": "securepassword"
-}
+Body: { "email": "admin@example.com", "password": "securepassword" }
+Response: { "access_token": "...", "refresh_token": "...", "expires_in": 3600, "user": { "email": "..." } }
 ```
 
-Response:
+**POST /private/auth/refresh-token**
+```json
+Headers: Authorization: Bearer <access_token>
+Body: { "refresh_token": "..." }
+Response: { "status": "success", "data": { "access_token": "...", "refresh_token": "...", "expires_in": 3600 } }
+```
 
-Authentication token for admin panel
+**GET /auth/me**
+```json
+Headers: Authorization: Bearer <access_token>
+Response: { "email": "admin@email.com" }
+```
 
 ### Categories
 

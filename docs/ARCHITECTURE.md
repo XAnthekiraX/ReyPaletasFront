@@ -51,7 +51,7 @@ Responsibilities:
 - Manage franchises
 - Manage announcements
 
-Authentication is handled through Supabase Auth.
+Authentication is handled through JWT tokens with refresh token flow.
 
 ---
 
@@ -65,7 +65,8 @@ Components:
 
 - React frontend application
 - Node.js backend API
-- Supabase database and authentication
+- Supabase database
+- JWT authentication with refresh tokens
 - WhatsApp order generation
 - Email service for notifications
 
@@ -133,14 +134,14 @@ Supabase also provides:
 
 ## Authentication
 
-Handled by Supabase Auth.
+Handled by JWT tokens with refresh token flow.
 
 Used only for the admin panel.
 
 Responsibilities:
 
 - admin login
-- session management
+- session management with token refresh
 - secure access to admin operations
 
 ---
@@ -185,7 +186,7 @@ Admin Content Management
 
 Admin Login  
 ↓  
-Supabase Auth  
+JWT Tokens (access + refresh)  
 ↓  
 Frontend Admin Panel  
 ↓  

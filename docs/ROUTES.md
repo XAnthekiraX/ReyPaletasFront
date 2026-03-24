@@ -79,7 +79,13 @@ From this page the user completes the order via WhatsApp.
 
 # 3. Admin Routes
 
-Admin routes are protected and require authentication via Supabase.
+Admin routes are protected and require authentication via JWT tokens.
+
+---
+
+/admin/login
+
+Admin login page.
 
 ---
 

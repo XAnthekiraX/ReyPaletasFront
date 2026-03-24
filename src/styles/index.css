@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Nunito", system-ui, sans-serif;
+  --font-display: "Rubik", sans-serif;
+  --font-handwriting: "Dancing Script", cursive;
+
+  /* Primary - Púrpura Oscuro */
+  --color-primary: #492360;
+  --color-primary-hover: #3a1d4d;
+  --color-primary-light: #6b3d82;
+  --color-primary-dark: #2d1338;
+  --color-primary-muted: #9a7ab8;
+
+  /* Secondary - Crema */
+  --color-secondary: #fef0e7;
+  --color-secondary-hover: #fce8d8;
+  --color-secondary-light: #fff9f5;
+  --color-secondary-dark: #f5dcc9;
+  --color-secondary-muted: #c9b8a8;
+
+  /* Tertiary - Amarillo/Dorado */
+  --color-tertiary: #f5bf3b;
+  --color-tertiary-hover: #eab029;
+  --color-tertiary-light: #f7d66b;
+  --color-tertiary-dark: #d4a020;
+  --color-tertiary-muted: #c9a830;
+
+  /* Quaternary - Rojo/Carmín */
+  --color-quaternary: #e3023a;
+  --color-quaternary-hover: #c9022f;
+  --color-quaternary-light: #f04d6a;
+  --color-quaternary-dark: #b0012c;
+  --color-quaternary-muted: #c9506e;
+
+  /* Neutros */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Semantic */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
