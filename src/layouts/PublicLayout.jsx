@@ -1,7 +1,39 @@
 import { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
+import SVG from "../assets/logo.svg?react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'motion/react'
+import { a, div, p } from 'motion/react-client';
+import { Icon } from '@iconify/react';
+const socialNetworks = [
+  {
+    link: "https://www.facebook.com/reypaletas.ecu/",
+    icon: "mdi:facebook"
+  },
+  {
+    link: "https://www.instagram.com/reypaletas.ecu/",
+    icon: "mdi:instagram"
+  },
+  {
+    link: "",
+    icon: "mdi:whatsapp"
+  }
+]
+
+const contactOptions = [
+  {
+    name: "info@reypaletas.com",
+    icon: "iconamoon:email"
+  },
+  {
+    name: "+593 99 804 4059",
+    icon: "tabler:phone"
+  },
+  {
+    name: "Ambato, Ecuador",
+    icon: "tdesign:location"
+  },
+]
 
 const navLinks = [
   { name: 'Inicio', path: '/' },
@@ -20,9 +52,9 @@ function Header() {
     <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <Link to="/" className="text-2xl font-bold text-primary">
-              Rey Paletas
+              <SVG className="fill-primary h-10" />
             </Link>
           </div>
 
@@ -31,11 +63,10 @@ function Header() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`${
-                  location.pathname === link.path
-                    ? 'text-primary'
-                    : 'text-gray-700 hover:text-primary'
-                } px-3 py-2 text-sm font-medium transition-colors`}
+                className={`${location.pathname === link.path
+                  ? 'text-primary'
+                  : 'text-gray-700 hover:text-primary'
+                  } px-3 py-2 text-sm font-medium transition-colors`}
               >
                 {link.name}
               </Link>
@@ -87,11 +118,10 @@ function Header() {
                     <Link
                       to={link.path}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`${
-                        location.pathname === link.path
-                          ? 'text-primary bg-primary/5'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      } px-3 py-2 rounded-md text-sm font-medium block`}
+                      className={`${location.pathname === link.path
+                        ? 'text-primary bg-primary/5'
+                        : 'text-gray-700 hover:bg-gray-50'
+                        } px-3 py-2 rounded-md text-sm font-medium block`}
                     >
                       {link.name}
                     </Link>
@@ -121,46 +151,53 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="bg-quaternary text-white py-8">
+    <footer className="bg-primary text-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Rey Paletas</h3>
-            <p className="text-gray-300 text-sm">Helados artesanales de la mejor calidad</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
+          <div className='flex flex-col justify-center items-center lg:items-start gap-2'>
+            <SVG className="fill-secondary h-8" />
+            <p className="text-tertiary text-2xl font-handwriting">El relleno de tu vida</p>
+            <div className='flex w-auto justify-center lg:items-start items-center gap-2.5'>
+              {
+                socialNetworks.map((items, index) => {
+                  return (
+                    <a key={index} href={items.link} className='text-2xl text-tertiary bg-secondary/15 p-1.5 rounded-full hover:scale-110 transition-all'>
+                      <Icon icon={items.icon} />
+                    </a>
+                  );
+                })
+              }
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Contacto</h3>
-            <p className="text-gray-300 text-sm">info@reypaletas.com</p>
-            <p className="text-gray-300 text-sm">+1 234 567 890</p>
+          <div className='flex flex-col justify-center items-center lg:items-start gap-2'>
+            <h3 className="text-lg font-semibold mb-4">EXPLORAR</h3>
+            <div className='grid grid-cols-3 lg:grid-cols-2 gap-1 lg:2.5'>
+              {
+                navLinks.map((nav, index) => {
+                  return (
+                    <Link to={nav.path}>{nav.name}</Link>
+                  )
+                })
+              }
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Síguenos</h3>
-            <div className="flex space-x-4">
-              <motion.a 
-                href="#" 
-                className="text-gray-300 hover:text-primary transition-colors"
-                whileHover={{ scale: 1.1, y: -2 }}
-              >
-                Instagram
-              </motion.a>
-              <motion.a 
-                href="#" 
-                className="text-gray-300 hover:text-primary transition-colors"
-                whileHover={{ scale: 1.1, y: -2 }}
-              >
-                Facebook
-              </motion.a>
-              <motion.a 
-                href="#" 
-                className="text-gray-300 hover:text-primary transition-colors"
-                whileHover={{ scale: 1.1, y: -2 }}
-              >
-                WhatsApp
-              </motion.a>
+          <div className='flex flex-col justify-center items-center lg:items-start gap-2'>
+            <h3 className="text-lg font-semibold mb-4">CONTACTANOS</h3>
+            <div className='gap-1.5 flex flex-col text-sm'>
+              {
+                contactOptions.map((option, index) => {
+                  return (
+                    <div key={index} className='flex justify-start items-center gap-2.5'>
+                      <Icon icon={option.icon} className='text-lg text-tertiary' />
+                      <p>{option.name}</p>
+                    </div>
+                  )
+                })
+              }
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
+        <div className="mt-8 pt-8 t gray-700 text-center text-gray-400 text-sm">
           © 2026 Rey Paletas. Todos los derechos reservados.
         </div>
       </div>

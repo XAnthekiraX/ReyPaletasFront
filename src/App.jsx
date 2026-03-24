@@ -5,11 +5,12 @@ import AdminLayout from './layouts/AdminLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminLogin from './pages/admin/AdminLogin'
 import SessionExpiryAlert from './components/SessionExpiryAlert'
+import Home from './pages/public/Home'
 
 function PublicRoutes() {
   return (
     <Route element={<PublicLayout />}>
-      <Route path="/" element={<div className="p-8"><h1 className="text-2xl font-bold">Home</h1><p className="text-gray-600 mt-2">Página de inicio - Coming Soon</p></div>} />
+      <Route path="/" element={<Home />} />
       <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
       <Route path="/quienes-somos" element={<div className="p-8"><h1 className="text-2xl font-bold">Quiénes Somos</h1><p className="text-gray-600 mt-2">Nuestra historia - Coming Soon</p></div>} />
       <Route path="/puntos-de-venta" element={<div className="p-8"><h1 className="text-2xl font-bold">Puntos de Venta</h1><p className="text-gray-600 mt-2">Dónde encontrarnos - Coming Soon</p></div>} />
