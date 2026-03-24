@@ -3,7 +3,7 @@
 ## Fase 1: Configuración
 
 - [ ] 1.1 Crear archivo `.env` con variables requeridas
-- [ ] 1.2 Instalar dependencias adicionales (@supabase/supabase-js, @react-google-maps/api, motion, @iconify/react)
+- [ ] 1.2 Instalar dependencias adicionales (@supabase/supabase-js, leaflet, react-leaflet, motion, @iconify/react)
 - [ ] 1.3 Crear estructura de carpetas src/
 
 ## Fase 2: Servicios y Estado
