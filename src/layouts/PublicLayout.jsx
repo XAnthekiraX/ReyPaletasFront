@@ -63,11 +63,15 @@ function Header() {
                 key={link.path}
                 to={link.path}
                 className={`${location.pathname === link.path
-                  ? 'text-primary'
-                  : 'text-gray-700 hover:text-primary'
-                  } px-3 py-2 text-sm font-medium transition-colors`}
+                  ? 'text-primary font-bold '
+                  : 'text-gray-700 font-medium hover:text-primary'
+                  } px-3 py-2 text-sm  transition-all`}
               >
                 {link.name}
+                <div className={`${location.pathname === link.path
+                  ? 'border border-primary w-full '
+                  : 'w-0'
+                  } transition-all`}></div>
               </Link>
             ))}
           </nav>
@@ -120,7 +124,7 @@ function Header() {
                       className={`${location.pathname === link.path
                         ? 'text-primary bg-primary/5'
                         : 'text-gray-700 hover:bg-gray-50'
-                        } px-3 py-2 rounded-md text-sm font-medium block`}
+                        } px-3 py-2 rounded-md flex text-sm font-medium `}
                     >
                       {link.name}
                     </Link>
@@ -149,6 +153,7 @@ function Header() {
 }
 
 function Footer() {
+  const location = useLocation()
   return (
     <footer className="bg-primary text-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
@@ -172,9 +177,14 @@ function Footer() {
             <h3 className="text-lg font-semibold mb-4">EXPLORAR</h3>
             <div className='grid grid-cols-3 lg:grid-cols-2 gap-1 lg:2.5'>
               {
-                navLinks.map((nav) => {
+                navLinks.map((nav, index) => {
                   return (
-                    <Link to={nav.path}>{nav.name}</Link>
+                    <Link to={nav.path} key={index} className={`${location.pathname === nav.path
+                      ? 'text-quaternary font-bold'
+                      : ''
+                      } transition-all`}>
+                      {nav.name}
+                    </Link>
                   )
                 })
               }
