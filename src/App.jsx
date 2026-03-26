@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './store/AuthContext'
+import { CartProvider } from './context/CartContext'
 import PublicLayout from './layouts/PublicLayout'
 import AdminLayout from './layouts/AdminLayout'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -7,40 +8,18 @@ import AdminLogin from './pages/admin/AdminLogin'
 import SessionExpiryAlert from './components/SessionExpiryAlert'
 import Home from './pages/public/Home'
 import Products from './pages/public/Products'
+import ShoppingCart from './pages/public/ShoppingCart'
 
 function PublicRoutes() {
   return (
     <Route element={<PublicLayout />}>
       <Route path="/" element={<Home />} />
       <Route path="/sabores" element={<Products />} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
-      <Route path="/sabores" element={<div className="p-8"><h1 className="text-2xl font-bold">Sabores</h1><p className="text-gray-600 mt-2">Catálogo de productos - Coming Soon</p></div>} />
+      <Route path="/compras" element={<ShoppingCart />} />
       <Route path="/quienes-somos" element={<div className="p-8"><h1 className="text-2xl font-bold">Quiénes Somos</h1><p className="text-gray-600 mt-2">Nuestra historia - Coming Soon</p></div>} />
       <Route path="/puntos-de-venta" element={<div className="p-8"><h1 className="text-2xl font-bold">Puntos de Venta</h1><p className="text-gray-600 mt-2">Dónde encontrarnos - Coming Soon</p></div>} />
       <Route path="/franquicias" element={<div className="p-8"><h1 className="text-2xl font-bold">Franquicias</h1><p className="text-gray-600 mt-2">Franquicias disponibles - Coming Soon</p></div>} />
       <Route path="/contactanos" element={<div className="p-8"><h1 className="text-2xl font-bold">Contáctanos</h1><p className="text-gray-600 mt-2">Escríbenos - Coming Soon</p></div>} />
-      <Route path="/compras" element={<div className="p-8"><h1 className="text-2xl font-bold">Compras</h1><p className="text-gray-600 mt-2">Tu carrito - Coming Soon</p></div>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>
   )
@@ -120,9 +99,11 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <CartProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </CartProvider>
     </BrowserRouter>
   )
 }

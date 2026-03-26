@@ -4,6 +4,8 @@ import SVG from "../assets/logo.svg?react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'motion/react'
 import { Icon } from '@iconify/react'
+import { useCart } from '../context/CartContext'
+
 const socialNetworks = [
   {
     link: "https://www.facebook.com/reypaletas.ecu/",
@@ -46,6 +48,7 @@ const navLinks = [
 function Header() {
   const location = useLocation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { cartCount } = useCart()
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -77,12 +80,17 @@ function Header() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link
-              to="/compras"
-              className="hidden md:inline-flex bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium"
-            >
-              Carrito
-            </Link>
+            {cartCount > 0 && (
+              <Link
+                to="/compras"
+                className="relative p-2 text-gray-700 hover:text-primary transition-colors"
+              >
+                <Icon icon="mdi:cart" className="w-6 h-6" />
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              </Link>
+            )}
 
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -130,19 +138,22 @@ function Header() {
                     </Link>
                   </motion.div>
                 ))}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: navLinks.length * 0.05 }}
-                >
-                  <Link
-                    to="/compras"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium text-center mt-2 block"
+                {cartCount > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navLinks.length * 0.05 }}
                   >
-                    Carrito
-                  </Link>
-                </motion.div>
+                    <Link
+                      to="/compras"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium mt-2"
+                    >
+                      <Icon icon="mdi:cart" className="w-5 h-5" />
+                      Carrito ({cartCount})
+                    </Link>
+                  </motion.div>
+                )}
               </nav>
             </motion.div>
           )}
