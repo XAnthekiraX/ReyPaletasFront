@@ -8,6 +8,7 @@ import AdminLogin from './pages/admin/AdminLogin'
 import Dashboard from './pages/admin/Dashboard'
 import AdminProducts from './pages/admin/Products'
 import AdminAnnouncements from './pages/admin/Announcements'
+import AdminFranchises from './pages/admin/Franchises'
 import SessionExpiryAlert from './components/SessionExpiryAlert'
 import Home from './pages/public/Home'
 import Products from './pages/public/Products'
@@ -54,7 +55,7 @@ function AdminRoutes() {
         } />
         <Route path="franquicias" element={
           <ProtectedRoute>
-            <div className="p-8"><h1 className="text-2xl font-bold">Franquicias</h1><p className="text-gray-600 mt-2">Gestión de franquicias</p></div>
+            <AdminFranchises />
           </ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to="/admin" replace />} />
