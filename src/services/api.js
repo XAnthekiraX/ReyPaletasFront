@@ -116,7 +116,7 @@ export const publicApi = {
 // Private data endpoints (admin)
 export const privateApi = {
   // Categories
-  getCategories: () => privateApi.get('/private/categories'),
+  getCategories: () => api.getPrivate('/private/categories'),
   createCategory: (data) => api.postPrivate('/private/categories', data),
   updateCategory: (id, data) => api.putPrivate(`/private/categories/${id}`, data),
   deleteCategory: (id) => api.deletePrivate(`/private/categories/${id}`),

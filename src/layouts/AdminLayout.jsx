@@ -7,10 +7,8 @@ import { useAuth } from '../store/AuthContext'
 const adminNavLinks = [
   { name: 'Dashboard', path: '/admin' },
   { name: 'Productos', path: '/admin/productos' },
-  { name: 'Categorías', path: '/admin/categorias' },
   { name: 'Avisos', path: '/admin/avisos' },
   { name: 'Franquicias', path: '/admin/franquicias' },
-  { name: 'Productos Futuros', path: '/admin/productos-futuros' },
 ]
 
 function AdminSidebar({ isOpen, onClose }) {
@@ -76,11 +74,10 @@ w-64 bg-primary text-white min-h-screen
                 <Link
                   to={link.path}
                   onClick={onClose}
-                  className={`block px-6 py-3 text-sm transition-colors ${
-                    isActive
-                      ? 'bg-primary text-white'
-                      : 'text-white hover:bg-primary-hover'
-                  }`}
+                  className={`block px-6 py-3 text-sm transition-colors ${isActive
+                    ? 'bg-primary text-white'
+                    : 'text-white hover:bg-primary-hover'
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -114,11 +111,10 @@ w-64 bg-primary text-white min-h-screen
               <Link
                 key={link.path}
                 to={link.path}
-                className={`block px-6 py-3 text-sm transition-colors ${
-                  isActive
-                    ? 'bg-primary text-white'
-                    : 'text-white hover:bg-primary-hover'
-                }`}
+                className={`block px-6 py-3 text-sm transition-colors ${isActive
+                  ? 'bg-primary text-white'
+                  : 'text-white hover:bg-primary-hover'
+                  }`}
               >
                 {link.name}
               </Link>
@@ -163,7 +159,7 @@ function AdminHeader({ onMenuClick }) {
         <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
         <div className="flex items-center space-x-2 md:space-x-4">
           <span className="hidden sm:block text-sm text-primary">{user?.email || 'admin'}</span>
-          <motion.button 
+          <motion.button
             onClick={handleLogout}
             className="text-sm text-red-600 hover:text-red-700"
             whileHover={{ scale: 1.05 }}
@@ -181,11 +177,11 @@ function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-secondary">
+    <div className="min-h-screen bg-primary/10">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminSidebarContent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
-      <motion.main 
+      <motion.main
         className="md:ml-64 p-4 md:p-6"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

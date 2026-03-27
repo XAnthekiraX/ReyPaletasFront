@@ -5,6 +5,8 @@ import PublicLayout from './layouts/PublicLayout'
 import AdminLayout from './layouts/AdminLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminLogin from './pages/admin/AdminLogin'
+import Dashboard from './pages/admin/Dashboard'
+import AdminProducts from './pages/admin/Products'
 import SessionExpiryAlert from './components/SessionExpiryAlert'
 import Home from './pages/public/Home'
 import Products from './pages/public/Products'
@@ -36,17 +38,12 @@ function AdminRoutes() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={
           <ProtectedRoute>
-            <div className="p-8"><h1 className="text-2xl font-bold">Dashboard</h1><p className="text-gray-600 mt-2">Panel de administración</p></div>
+            <Dashboard />
           </ProtectedRoute>
         } />
         <Route path="productos" element={
           <ProtectedRoute>
-            <div className="p-8"><h1 className="text-2xl font-bold">Productos</h1><p className="text-gray-600 mt-2">Gestión de productos</p></div>
-          </ProtectedRoute>
-        } />
-        <Route path="categorias" element={
-          <ProtectedRoute>
-            <div className="p-8"><h1 className="text-2xl font-bold">Categorías</h1><p className="text-gray-600 mt-2">Gestión de categorías</p></div>
+            <AdminProducts />
           </ProtectedRoute>
         } />
         <Route path="avisos" element={
@@ -57,11 +54,6 @@ function AdminRoutes() {
         <Route path="franquicias" element={
           <ProtectedRoute>
             <div className="p-8"><h1 className="text-2xl font-bold">Franquicias</h1><p className="text-gray-600 mt-2">Gestión de franquicias</p></div>
-          </ProtectedRoute>
-        } />
-        <Route path="productos-futuros" element={
-          <ProtectedRoute>
-            <div className="p-8"><h1 className="text-2xl font-bold">Productos Futuros</h1><p className="text-gray-600 mt-2">Gestión de productos futuros</p></div>
           </ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to="/admin" replace />} />

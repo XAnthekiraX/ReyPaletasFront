@@ -254,10 +254,14 @@ function ProductCard({ product }) {
 
 export default function Products() {
     const [categories, setCategories] = useState([])
-    const [products, setProducts] = useState([])
+    const [allProducts, setAllProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState(null)
     const [loading, setLoading] = useState(true)
     const [loadingProducts, setLoadingProducts] = useState(false)
+
+    const products = selectedCategory 
+        ? allProducts.filter(p => p.category_id === selectedCategory)
+        : allProducts
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -277,8 +281,8 @@ export default function Products() {
         const fetchProducts = async () => {
             setLoadingProducts(true)
             try {
-                const data = await publicApi.getProducts(selectedCategory, true)
-                setProducts(data || [])
+                const data = await publicApi.getProducts()
+                setAllProducts(data || [])
             } catch (error) {
                 console.error('Error fetching products:', error)
             } finally {
@@ -286,7 +290,7 @@ export default function Products() {
             }
         }
         fetchProducts()
-    }, [selectedCategory])
+    }, [])
 
     if (loading) {
         return (
@@ -342,9 +346,9 @@ export default function Products() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {products.map((product, index) => (
+                        {products.map((product) => (
                             <ProductCard
-                                key={index}
+                                key={product.id}
                                 product={product}
                             />
                         ))}

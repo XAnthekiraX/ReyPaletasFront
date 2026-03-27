@@ -49,9 +49,9 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     setTouched({ email: true, password: true })
-    
+
     if (!validateForm()) {
       return
     }
@@ -66,8 +66,8 @@ export default function AdminLogin() {
   const showGeneralError = authError && !hasErrors
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-secondary p-4">
-      <motion.div 
+    <div className="min-h-screen flex items-center justify-center bg-primary/80 p-4">
+      <motion.div
         className="max-w-md w-full bg-white rounded-lg shadow-md overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -113,11 +113,10 @@ export default function AdminLogin() {
                 }
               }}
               onBlur={() => handleBlur('email')}
-              className={`w-full px-4 py-3 border rounded-lg outline-none transition-all ${
-                errors.email && touched.email
-                  ? 'border-red-500 focus:ring-2 focus:ring-red-500/50 focus:border-red-500'
-                  : 'border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary'
-              }`}
+              className={`w-full px-4 py-3 border rounded-lg outline-none transition-all ${errors.email && touched.email
+                ? 'border-red-500 focus:ring-2 focus:ring-red-500/50 focus:border-red-500'
+                : 'border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary'
+                }`}
               placeholder="admin@reypaletas.com"
               disabled={isLoading}
             />
@@ -152,11 +151,10 @@ export default function AdminLogin() {
                   }
                 }}
                 onBlur={() => handleBlur('password')}
-                className={`w-full px-4 py-3 pr-12 border rounded-lg outline-none transition-all ${
-                  errors.password && touched.password
-                    ? 'border-red-500 focus:ring-2 focus:ring-red-500/50 focus:border-red-500'
-                    : 'border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary'
-                }`}
+                className={`w-full px-4 py-3 pr-12 border rounded-lg outline-none transition-all ${errors.password && touched.password
+                  ? 'border-red-500 focus:ring-2 focus:ring-red-500/50 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary'
+                  }`}
                 placeholder="••••••••"
                 disabled={isLoading}
               />
