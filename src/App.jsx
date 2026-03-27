@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import AdminLogin from './pages/admin/AdminLogin'
 import Dashboard from './pages/admin/Dashboard'
 import AdminProducts from './pages/admin/Products'
+import AdminAnnouncements from './pages/admin/Announcements'
 import SessionExpiryAlert from './components/SessionExpiryAlert'
 import Home from './pages/public/Home'
 import Products from './pages/public/Products'
@@ -48,7 +49,7 @@ function AdminRoutes() {
         } />
         <Route path="avisos" element={
           <ProtectedRoute>
-            <div className="p-8"><h1 className="text-2xl font-bold">Avisos</h1><p className="text-gray-600 mt-2">Gestión de avisos</p></div>
+            <AdminAnnouncements />
           </ProtectedRoute>
         } />
         <Route path="franquicias" element={
