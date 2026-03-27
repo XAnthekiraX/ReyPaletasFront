@@ -38,7 +38,7 @@ function AdminSidebarContent({ isOpen, onClose }) {
       <motion.aside
         className={`
           fixed inset-y-0 left-0 z-50
-          w-64 bg-quaternary text-white min-h-screen
+w-64 bg-primary text-white min-h-screen
           md:hidden
         `}
         initial={{ x: '-100%' }}
@@ -47,10 +47,10 @@ function AdminSidebarContent({ isOpen, onClose }) {
       >
         <div className="p-6 flex items-center justify-between">
           <div>
-            <Link to="/" className="text-2xl font-bold text-primary">
+            <Link to="/" className="text-2xl font-bold text-secondary">
               Rey Paletas
             </Link>
-            <p className="text-sm text-gray-400 mt-1">Admin Panel</p>
+            <p className="text-sm text-primary-muted mt-1">Admin Panel</p>
           </div>
           <motion.button
             onClick={onClose}
@@ -79,7 +79,7 @@ function AdminSidebarContent({ isOpen, onClose }) {
                   className={`block px-6 py-3 text-sm transition-colors ${
                     isActive
                       ? 'bg-primary text-white'
-                      : 'text-gray-300 hover:bg-gray-800'
+                      : 'text-white hover:bg-primary-hover'
                   }`}
                 >
                   {link.name}
@@ -88,10 +88,10 @@ function AdminSidebarContent({ isOpen, onClose }) {
             )
           })}
         </nav>
-        <div className="absolute bottom-0 w-full p-6 border-t border-gray-700">
+        <div className="absolute bottom-0 w-full p-6 border-t border-primary-dark">
           <Link
             to="/"
-            className="block text-gray-300 hover:text-white text-sm"
+            className="block text-white hover:text-secondary text-sm"
           >
             ← Volver al sitio
           </Link>
@@ -99,12 +99,12 @@ function AdminSidebarContent({ isOpen, onClose }) {
       </motion.aside>
 
       {/* Desktop static sidebar */}
-      <aside className="hidden md:flex md:flex-col fixed inset-y-0 left-0 w-64 bg-quaternary text-white min-h-screen">
+      <aside className="hidden md:flex md:flex-col fixed inset-y-0 left-0 w-64 bg-primary text-white min-h-screen">
         <div className="p-6">
-          <Link to="/" className="text-2xl font-bold text-primary">
+          <Link to="/" className="text-2xl font-bold text-secondary">
             Rey Paletas
           </Link>
-          <p className="text-sm text-gray-400 mt-1">Admin Panel</p>
+          <p className="text-sm text-primary-muted mt-1">Admin Panel</p>
         </div>
         <nav className="mt-6 flex-1">
           {adminNavLinks.map((link) => {
@@ -117,7 +117,7 @@ function AdminSidebarContent({ isOpen, onClose }) {
                 className={`block px-6 py-3 text-sm transition-colors ${
                   isActive
                     ? 'bg-primary text-white'
-                    : 'text-gray-300 hover:bg-gray-800'
+                    : 'text-white hover:bg-primary-hover'
                 }`}
               >
                 {link.name}
@@ -125,10 +125,10 @@ function AdminSidebarContent({ isOpen, onClose }) {
             )
           })}
         </nav>
-        <div className="p-6 border-t border-gray-700">
+        <div className="p-6 border-t border-primary-dark">
           <Link
             to="/"
-            className="block text-gray-300 hover:text-white text-sm"
+            className="block text-white hover:text-secondary text-sm"
           >
             ← Volver al sitio
           </Link>
@@ -152,7 +152,7 @@ function AdminHeader({ onMenuClick }) {
       <div className="flex justify-between items-center h-16 px-4 md:px-6">
         <motion.button
           onClick={onMenuClick}
-          className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+          className="md:hidden p-2 rounded-md text-primary hover:bg-secondary"
           aria-label="Open menu"
           whileTap={{ scale: 0.95 }}
         >
@@ -160,9 +160,9 @@ function AdminHeader({ onMenuClick }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </motion.button>
-        <h1 className="text-xl font-semibold text-gray-800">Admin Panel</h1>
+        <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
         <div className="flex items-center space-x-2 md:space-x-4">
-          <span className="hidden sm:block text-sm text-gray-600">{user?.email || 'admin'}</span>
+          <span className="hidden sm:block text-sm text-primary">{user?.email || 'admin'}</span>
           <motion.button 
             onClick={handleLogout}
             className="text-sm text-red-600 hover:text-red-700"
@@ -181,7 +181,7 @@ function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminSidebarContent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminHeader onMenuClick={() => setSidebarOpen(true)} />

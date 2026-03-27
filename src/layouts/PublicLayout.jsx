@@ -60,7 +60,7 @@ function Header() {
             </Link>
           </div>
 
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex justify-center items-center space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -191,7 +191,7 @@ function Footer() {
                 navLinks.map((nav, index) => {
                   return (
                     <Link to={nav.path} key={index} className={`${location.pathname === nav.path
-                      ? 'text-quaternary font-bold'
+                      ? 'text-tertiary font-bold'
                       : ''
                       } transition-all`}>
                       {nav.name}

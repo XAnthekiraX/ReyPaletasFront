@@ -28,7 +28,7 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
           <p className="text-sm text-gray-500">{item.variantName}</p>
         )}
         <p className="text-primary font-medium">${item.price.toFixed(2)} c/u</p>
-        
+
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-2">
             <button
@@ -38,11 +38,11 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
             >
               <Icon icon="mdi:minus" className="w-4 h-4 text-gray-700" />
             </button>
-            
+
             <span className="w-8 text-center font-medium text-gray-800">
               {item.quantity}
             </span>
-            
+
             <button
               onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
               className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
@@ -50,7 +50,7 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
               <Icon icon="mdi:plus" className="w-4 h-4 text-gray-700" />
             </button>
           </div>
-          
+
           <p className="font-bold text-gray-800">${total.toFixed(2)}</p>
         </div>
       </div>
@@ -151,19 +151,19 @@ export default function ShoppingCart() {
             <span className="text-gray-600">Productos ({totalItems})</span>
             <span className="text-gray-800">${subtotal.toFixed(2)}</span>
           </div>
-          
+
           <div className="flex justify-between items-center mb-4">
             <span className="text-gray-600">Envío</span>
-            <span className="text-green-600 font-medium">Gratis</span>
+            <span className="text-red-600 font-medium">No Incluye</span>
           </div>
-          
+
           <div className="border-t border-gray-200 pt-4 mb-6">
             <div className="flex justify-between items-center">
               <span className="text-lg font-bold text-gray-800">Total</span>
               <span className="text-2xl font-bold text-primary">${subtotal.toFixed(2)}</span>
             </div>
           </div>
-          
+
           <a
             href={whatsappLink}
             target="_blank"
@@ -173,7 +173,7 @@ export default function ShoppingCart() {
             <Icon icon="ic:baseline-whatsapp" className="w-5 h-5" />
             Hacer pedido
           </a>
-          
+
           <Link
             to="/sabores"
             className="block text-center mt-4 text-gray-600 hover:text-primary transition-colors"

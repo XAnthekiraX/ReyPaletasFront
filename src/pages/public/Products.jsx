@@ -46,7 +46,7 @@ function CategoryNav({ categories, selectedCategory, onSelectCategory }) {
             <div
                 ref={scrollRef}
                 onScroll={checkScroll}
-                className="flex gap-3 overflow-x-auto scrollbar-hide py-2 px-1 justify-center"
+                className="flex gap-3 overflow-x-auto scrollbar-hide py-2 px-1 justify-start lg:justify-center"
             >
                 <button
                     onClick={() => onSelectCategory(null)}
@@ -96,9 +96,9 @@ function VariantSelector({ variants, selectedVariant, onSelectVariant }) {
                 <span className="text-gray-700">
                     {selectedVariant?.name || 'Seleccionar'} - <span className="font-bold text-primary">${selectedVariant?.price.toFixed(2)}</span>
                 </span>
-                <Icon 
-                    icon={isOpen ? "mdi:chevron-up" : "mdi:chevron-down"} 
-                    className="w-5 h-5 text-gray-700" 
+                <Icon
+                    icon={isOpen ? "mdi:chevron-up" : "mdi:chevron-down"}
+                    className="w-5 h-5 text-gray-700"
                 />
             </button>
 
@@ -111,11 +111,10 @@ function VariantSelector({ variants, selectedVariant, onSelectVariant }) {
                                 onSelectVariant(variant)
                                 setIsOpen(false)
                             }}
-                            className={`w-full px-3 py-2 text-left text-sm rounded-md transition-all ${
-                                selectedVariant?.name === variant.name
+                            className={`w-full px-3 py-2 text-left text-sm rounded-md transition-all ${selectedVariant?.name === variant.name
                                     ? 'bg-primary text-white'
                                     : 'bg-white text-gray-700 hover:bg-gray-100'
-                            }`}
+                                }`}
                         >
                             {variant.name} - ${variant.price.toFixed(2)}
                         </button>
