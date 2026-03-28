@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { privateApi } from '../../services/api'
+import { sileo } from 'sileo'
 
 function AnnouncementPreview({ title, description, image_url }) {
   const hasContent = title || description || image_url
@@ -302,8 +303,10 @@ export default function Announcements() {
   const handleSaveAnnouncement = async (formData) => {
     if (editingAnnouncement) {
       await privateApi.updateAnnouncement(editingAnnouncement.id, formData)
+      sileo.success({ title: 'Aviso actualizado exitosamente' })
     } else {
       await privateApi.createAnnouncement(formData)
+      sileo.success({ title: 'Aviso creado exitosamente' })
     }
     setEditingAnnouncement(null)
     setPreviewData({ title: '', description: '', image_url: '' })
@@ -314,9 +317,10 @@ export default function Announcements() {
     if (!confirm('¿Estás seguro de eliminar este aviso?')) return
     try {
       await privateApi.deleteAnnouncement(id)
+      sileo.success({ title: 'Aviso eliminado exitosamente' })
       await fetchAnnouncements()
-    } catch (err) {
-      alert(err.message)
+    } catch {
+      sileo.error({ title: 'Error al eliminar aviso' })
     }
   }
 

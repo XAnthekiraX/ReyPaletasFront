@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { privateApi } from '../../services/api'
+import { sileo } from 'sileo'
 
 function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
   const [newCity, setNewCity] = useState('')
@@ -402,8 +403,10 @@ export default function Franchises() {
   const handleSaveFranchise = async (franchiseData) => {
     if (editingFranchise) {
       await privateApi.updateFranchise(editingFranchise.id, franchiseData)
+      sileo.success({ title: 'Franquicia actualizada exitosamente' })
     } else {
       await privateApi.createFranchise(franchiseData)
+      sileo.success({ title: 'Franquicia creada exitosamente' })
     }
     setEditingFranchise(null)
     await fetchData()
@@ -413,19 +416,22 @@ export default function Franchises() {
     if (!confirm('¿Eliminar esta franquicia?')) return
     try {
       await privateApi.deleteFranchise(id)
+      sileo.success({ title: 'Franquicia eliminada exitosamente' })
       await fetchData()
-    } catch (err) {
-      alert(err.message)
+    } catch {
+      sileo.error({ title: 'Error al eliminar franquicia' })
     }
   }
 
   const handleSaveCity = async (data) => {
     await privateApi.createCity(data)
+    sileo.success({ title: 'Ciudad creada exitosamente' })
     await fetchData()
   }
 
   const handleUpdateCity = async (id, data) => {
     await privateApi.updateCity(id, data)
+    sileo.success({ title: 'Ciudad actualizada exitosamente' })
     await fetchData()
   }
 
@@ -433,9 +439,10 @@ export default function Franchises() {
     if (!confirm('¿Eliminar esta ciudad?')) return
     try {
       await privateApi.deleteCity(id)
+      sileo.success({ title: 'Ciudad eliminada exitosamente' })
       await fetchData()
-    } catch (err) {
-      alert(err.message)
+    } catch {
+      sileo.error({ title: 'Error al eliminar ciudad' })
     }
   }
 

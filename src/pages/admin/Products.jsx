@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { privateApi } from '../../services/api'
+import { sileo } from 'sileo'
 
 function CategoryModal({ isOpen, onClose, categories, onSave, onDelete, onUpdate }) {
   const [newCategory, setNewCategory] = useState('')
@@ -603,6 +604,7 @@ export default function Products() {
           }
         }
       }
+      sileo.success({ title: 'Producto actualizado exitosamente' })
     } else {
       const response = await privateApi.createProduct(productData)
 
@@ -611,6 +613,7 @@ export default function Products() {
           await privateApi.createProductVariant({ ...variant, product_id: response.id })
         }
       }
+      sileo.success({ title: 'Producto creado exitosamente' })
     }
     setEditingProduct(null)
     await fetchData()
@@ -620,19 +623,22 @@ export default function Products() {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return
     try {
       await privateApi.deleteProduct(id)
+      sileo.success({ title: 'Producto eliminado exitosamente' })
       await fetchData()
-    } catch (err) {
-      alert(err.message)
+    } catch {
+      sileo.error({ title: 'Error al eliminar producto' })
     }
   }
 
   const handleSaveCategory = async (data) => {
     await privateApi.createCategory(data)
+    sileo.success({ title: 'Categoría creada exitosamente' })
     await fetchData()
   }
 
   const handleUpdateCategory = async (id, data) => {
     await privateApi.updateCategory(id, data)
+    sileo.success({ title: 'Categoría actualizada exitosamente' })
     await fetchData()
   }
 
@@ -640,9 +646,10 @@ export default function Products() {
     if (!confirm('¿Estás seguro de eliminar esta categoría?')) return
     try {
       await privateApi.deleteCategory(id)
+      sileo.success({ title: 'Categoría eliminada exitosamente' })
       await fetchData()
-    } catch (err) {
-      alert(err.message)
+    } catch {
+      sileo.error({ title: 'Error al eliminar categoría' })
     }
   }
 

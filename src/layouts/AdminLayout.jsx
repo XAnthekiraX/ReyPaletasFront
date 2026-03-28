@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'motion/react'
 import { useAuth } from '../store/AuthContext'
+import { Toaster } from 'sileo'
 
 const adminNavLinks = [
   { name: 'Dashboard', path: '/admin' },
@@ -178,6 +179,19 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-primary/10">
+      <Toaster 
+        position="top-right"
+        options={{
+          fill: "#1f2937",
+          roundness: 12,
+          styles: {
+            title: "text-white! text-sm font-semibold",
+            description: "text-white/70! text-xs",
+            badge: "bg-white/10!",
+            button: "bg-primary! hover:bg-primary/80! text-white!",
+          },
+        }}
+      />
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminSidebarContent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
