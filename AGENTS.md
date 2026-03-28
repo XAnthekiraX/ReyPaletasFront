@@ -7,6 +7,7 @@ This file provides guidelines for AI agents working in this repository.
 - **Project Name**: Rey Paletas Frontend
 - **Tech Stack**: React 19, Vite 7, React Router 7, Tailwind CSS 4
 - **Language**: JavaScript (ES2020+), JSX
+- **Notifications**: Sileo (https://sileo.aaryan.design)
 
 ---
 
@@ -30,6 +31,15 @@ npx eslint <file-path> --fix  # Lint specific file
 
 ---
 
+## Dependencies
+
+### Required
+```bash
+npm install sileo
+```
+
+---
+
 ## Environment Variables
 
 Create a `.env` file in the root directory (copy from `.env.example`):
@@ -44,6 +54,62 @@ VITE_API_URL=http://localhost:3000
 ```
 
 **Important:** Never commit `.env` files to version control. Only `.env.example` should be tracked.
+
+---
+
+## Notifications (Sileo)
+
+This project uses **Sileo** for toast notifications.
+
+### Installation
+```bash
+npm install sileo
+```
+
+### Usage
+
+#### In Admin Layout (all admin pages)
+```jsx
+import { Toaster } from 'sileo'
+
+// In AdminLayout.jsx
+<Toaster 
+  position="top-right"
+  options={{
+    fill: "#1f2937",
+    roundness: 12,
+    styles: {
+      title: "text-white! text-sm font-semibold",
+      description: "text-white/70! text-xs",
+      badge: "bg-white/10!",
+      button: "bg-primary! hover:bg-primary/80! text-white!",
+    },
+  }}
+/>
+```
+
+#### Triggering Notifications
+```jsx
+import { sileo } from 'sileo'
+
+// Success
+sileo.success({ title: 'Producto creado exitosamente' })
+
+// Error
+sileo.error({ title: 'Error al eliminar producto' })
+
+// Info
+sileo.info({ title: 'Información importante' })
+
+// With action button
+sileo.info({
+  title: 'Los productos han sido actualizados',
+  action: { 
+    label: 'Recargar', 
+    onClick: () => window.location.reload() 
+  }
+})
+```
 
 ---
 
@@ -103,13 +169,14 @@ Routes should be defined in `App.jsx` with different layouts for public website 
 ### Route Structure Example
 ```jsx
 import { Routes, Route } from 'react-router-dom'
-import PublicLayout from './components/layouts/PublicLayout'
-import AdminLayout from './components/layouts/AdminLayout'
-import Home from './pages/Home'
-import Menu from './pages/Menu'
-import Shop from './pages/Shop'
+import PublicLayout from './layouts/PublicLayout'
+import AdminLayout from './layouts/AdminLayout'
+import Home from './pages/public/Home'
+import Products from './pages/public/Products'
 import AdminDashboard from './pages/admin/Dashboard'
 import AdminProducts from './pages/admin/Products'
+import AdminAnnouncements from './pages/admin/Announcements'
+import AdminFranchises from './pages/admin/Franchises'
 
 function App() {
   return (
@@ -117,18 +184,20 @@ function App() {
       {/* Public routes with public layout */}
       <Route element={<PublicLayout />}>
         <Route path='/' element={<Home />} />
-        <Route path='/menu' element={<Menu />} />
-        <Route path='/shop' element={<Shop />} />
-        <Route path='/contact' element={<Contact />} />
-        <Route path='/locations' element={<Locations />} />
+        <Route path='/sabores' element={<Products />} />
+        <Route path='/compras' element={<ShoppingCart />} />
+        <Route path='/quienes-somos' element={<QuiienesSomos />} />
+        <Route path='/puntos-de-venta' element={<PuntosDeVenta />} />
+        <Route path='/franquicias' element={<Franquicias />} />
+        <Route path='/contactanos' element={<Contact />} />
       </Route>
 
       {/* Admin routes with admin layout */}
       <Route path='/admin' element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
-        <Route path='products' element={<AdminProducts />} />
-        <Route path='orders' element={<AdminOrders />} />
-        <Route path='settings' element={<AdminSettings />} />
+        <Route path='productos' element={<AdminProducts />} />
+        <Route path='avisos' element={<AdminAnnouncements />} />
+        <Route path='franquicias' element={<AdminFranchises />} />
       </Route>
     </Routes>
   )
@@ -145,6 +214,72 @@ export default App
 
 ---
 
+## Admin Pages
+
+### Dashboard (`/admin`)
+- Shows statistics: products count, announcements count, franchises count
+- Uses `privateApi.getProducts()`, `privateApi.getAnnouncements()`, `privateApi.getFranchises()`
+
+### Products (`/admin/productos`)
+- Full CRUD for products
+- Category management via modal
+- Product variants support
+- Notifications on create/update/delete
+
+### Announcements (`/admin/avisos`)
+- Full CRUD for announcements
+- Live preview of how it will look on public site
+- Notifications on create/update/delete
+
+### Franchises (`/admin/franquicias`)
+- Full CRUD for franchises
+- City management via modal
+- Coordinates input as single field: "lat,lng" (e.g., "-1.478645,-77.999092")
+- Notifications on create/update/delete
+
+---
+
+## API Endpoints
+
+### Private Endpoints (require auth)
+
+| Resource | GET | POST | PUT | DELETE |
+|----------|-----|------|-----|--------|
+| Categories | `/private/categories` | `/private/categories` | `/private/categories/:id` | `/private/categories/:id` |
+| Products | `/private/products` | `/private/products` | `/private/products/:id` | `/private/products/:id` |
+| Product Variants | `/private/product-variants` | `/private/product-variants` | `/private/product-variants/:id` | `/private/product-variants/:id` |
+| Cities | `/private/cities` | `/private/cities` | `/private/cities/:id` | `/private/cities/:id` |
+| Franchises | `/private/franchises` | `/private/franchises` | `/private/franchises/:id` | `/private/franchises/:id` |
+| Announcements | `/private/announcements` | `/private/announcements` | `/private/announcements/:id` | `/private/announcements/:id` |
+
+### API Service Usage
+```javascript
+import { privateApi } from './services/api'
+
+// GET
+const products = await privateApi.getProducts()
+const categories = await privateApi.getCategories()
+const franchises = await privateApi.getFranchises()
+const announcements = await privateApi.getAnnouncements()
+
+// POST
+await privateApi.createProduct(data)
+await privateApi.createFranchise(data)
+await privateApi.createAnnouncement(data)
+
+// PUT
+await privateApi.updateProduct(id, data)
+await privateApi.updateFranchise(id, data)
+await privateApi.updateAnnouncement(id, data)
+
+// DELETE
+await privateApi.deleteProduct(id)
+await privateApi.deleteFranchise(id)
+await privateApi.deleteAnnouncement(id)
+```
+
+---
+
 ## Code Style Guidelines
 
 ### File Organization
@@ -152,6 +287,9 @@ export default App
 src/
 ├── components/     # Reusable UI components
 ├── pages/          # Route page components
+│   ├── public/     # Public pages (Home, Products, etc.)
+│   └── admin/     # Admin pages (Dashboard, Products, etc.)
+├── layouts/        # Layout components (PublicLayout, AdminLayout)
 ├── hooks/          # Custom React hooks
 ├── services/       # API calls and business logic
 ├── utils/          # Helper functions
@@ -208,6 +346,7 @@ function useUserData(userId) {
 ### Error Handling
 - Use try-catch for async operations
 - Display user-friendly error messages
+- Use Sileo notifications for user feedback
 
 ```jsx
 async function fetchData() {
@@ -216,6 +355,7 @@ async function fetchData() {
     return response.data
   } catch (error) {
     console.error('Failed to fetch data:', error)
+    sileo.error({ title: 'Error al cargar datos' })
     throw new Error('Unable to load data. Please try again.')
   }
 }
