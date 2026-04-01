@@ -29,15 +29,17 @@ export function CartProvider({ children }) {
     setCartItems(prev => prev.filter(item => item.id !== itemId))
   }, [])
 
-  const addToCart = useCallback((product, quantity, variantName = null) => {
+  const addToCart = useCallback((product, quantity, variantName = null, variantPrice = null) => {
     if (!product?.id) {
       console.warn('Product has no ID:', product)
       return
     }
 
-    const price = product.variants && product.variants.length > 0
-      ? Math.min(...product.variants.map(v => v.price))
-      : product.price || 0
+    const price = variantPrice !== null 
+      ? variantPrice 
+      : (product.variants && product.variants.length > 0
+          ? Math.min(...product.variants.map(v => v.price))
+          : product.price || 0)
 
     const newItem = {
       id: product.id,

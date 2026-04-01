@@ -5,6 +5,18 @@ import { Icon } from '@iconify/react'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 
+const leafletStyles = `
+  .leaflet-container {
+    z-index: 0 !important;
+  }
+  .leaflet-control-zoom {
+    z-index: 10 !important;
+  }
+  .leaflet-popup {
+    z-index: 10 !important;
+  }
+`
+
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -55,7 +67,7 @@ function CityNav({ cities, selectedCity, onSelectCity }) {
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-2 overflow-x-auto scrollbar-hide py-2 px-1 justify-center"
+        className="flex gap-2 overflow-x-auto scrollbar-hide py-2 px-1 justify-start"
       >
         <button
           onClick={() => onSelectCity(null)}
@@ -128,6 +140,7 @@ function FranchiseMap({ franchises, selectedFranchise, onSelectFranchise }) {
         zoom={zoom}
         scrollWheelZoom={true}
         className="h-full w-full"
+        zIndex={1}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -146,9 +159,9 @@ function FranchiseMap({ franchises, selectedFranchise, onSelectFranchise }) {
                 <div className="text-sm min-w-[150px]">
                   <div className="flex items-center gap-2 mb-1">
                     {franchise.manager_photo && (
-                      <img 
-                        src={franchise.manager_photo} 
-                        alt={franchise.manager_name} 
+                      <img
+                        src={franchise.manager_photo}
+                        alt={franchise.manager_name}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     )}
@@ -311,6 +324,7 @@ export default function Franquicias() {
 
   return (
     <div className="min-h-screen bg-white">
+      <style>{leafletStyles}</style>
       <section className="py-8 md:py-12 bg-gradient-to-b from-primary/5 to-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-2xl md:text-4xl font-bold text-primary mb-2">

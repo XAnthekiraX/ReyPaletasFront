@@ -3,23 +3,27 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 class ApiClient {
   constructor() {
     this.baseUrl = API_BASE_URL
-    this.accessToken = localStorage.getItem('rey_paletas_access_token')
+  }
+
+  getAccessToken() {
+    return localStorage.getItem('rey_paletas_access_token')
   }
 
   setAccessToken(token) {
-    this.accessToken = token
+    localStorage.setItem('rey_paletas_access_token', token)
   }
 
   clearToken() {
-    this.accessToken = null
+    localStorage.removeItem('rey_paletas_access_token')
   }
 
   getHeaders(isPrivate = false) {
     const headers = {
       'Content-Type': 'application/json',
     }
-    if (isPrivate && this.accessToken) {
-      headers['Authorization'] = `Bearer ${this.accessToken}`
+    const token = this.getAccessToken()
+    if (isPrivate && token) {
+      headers['Authorization'] = `Bearer ${token}`
     }
     return headers
   }

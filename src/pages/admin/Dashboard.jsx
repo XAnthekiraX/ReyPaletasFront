@@ -1,53 +1,61 @@
 import { useState, useEffect } from 'react'
 import { privateApi } from '../../services/api'
 
-function StatCard({ icon: Icon, label, total, active, inactive, loading, error }) { // eslint-disable-line no-unused-vars
+function StatCard({ icon, label, total, active, inactive, loading, error }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-lg font-semibold text-gray-800">{label}</p>
-        <div className="bg-primary/10 p-2 rounded-full">
-          <Icon className="w-5 h-5 text-primary" />
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200">
+      <div className="flex items-center justify-between mb-5">
+        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+        <div className="bg-primary/10 p-2.5 rounded-lg">
+          {icon({ className: "w-5 h-5 text-primary" })}
         </div>
       </div>
       
       {loading ? (
-        <div className="space-y-2 animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-20"></div>
-          <div className="h-4 bg-gray-200 rounded w-32"></div>
-          <div className="h-4 bg-gray-200 rounded w-28"></div>
+        <div className="space-y-3 animate-pulse">
+          <div className="h-9 bg-gray-100 rounded w-16"></div>
+          <div className="h-4 bg-gray-100 rounded w-24"></div>
+          <div className="h-4 bg-gray-100 rounded w-20"></div>
         </div>
       ) : error ? (
         <p className="text-red-500 text-sm">{error}</p>
-        ) : (
-        <div className="space-y-1">
-          <p className="text-3xl font-bold text-primary">{total}</p>
-          <p className="text-sm text-green-600">Añadidos: {active}</p>
-          <p className="text-sm text-gray-500">Por añadir: {inactive}</p>
+      ) : (
+        <div className="space-y-2">
+          <p className="text-4xl font-bold text-gray-900">{total}</p>
+          <div className="flex items-center gap-4 pt-1">
+            <span className="flex items-center text-sm text-green-600">
+              <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+              {active} activos
+            </span>
+            <span className="flex items-center text-sm text-gray-400">
+              <span className="w-2 h-2 bg-gray-300 rounded-full mr-1.5"></span>
+              {inactive} pendientes
+            </span>
+          </div>
         </div>
       )}
     </div>
   )
 }
 
-function SimpleStatCard({ icon: Icon, label, value, loading, error }) { // eslint-disable-line no-unused-vars
+function SimpleStatCard({ icon, label, value, loading, error }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-lg font-semibold text-gray-800">{label}</p>
-        <div className="bg-primary/10 p-2 rounded-full">
-          <Icon className="w-5 h-5 text-primary" />
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200">
+      <div className="flex items-center justify-between mb-5">
+        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+        <div className="bg-primary/10 p-2.5 rounded-lg">
+          {icon({ className: "w-5 h-5 text-primary" })}
         </div>
       </div>
       
       {loading ? (
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-20"></div>
+          <div className="h-9 bg-gray-100 rounded w-16"></div>
         </div>
       ) : error ? (
         <p className="text-red-500 text-sm">{error}</p>
       ) : (
-        <p className="text-3xl font-bold text-primary">{value}</p>
+        <p className="text-4xl font-bold text-gray-900">{value}</p>
       )}
     </div>
   )
@@ -68,6 +76,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchStats = async () => {
+      await new Promise(resolve => setTimeout(resolve, 300))
+
       try {
         const [products, announcements, franchises] = await Promise.all([
           privateApi.getProducts(),
@@ -109,7 +119,10 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Dashboard</h1>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-500 mt-1">Resumen de tu panel de administración</p>
+      </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard

@@ -147,7 +147,8 @@ function ProductCard({ product }) {
 
     const handleAddToCart = () => {
         const variantName = hasVariants ? selectedVariant?.name : null
-        addToCart(product, quantity, variantName)
+        const variantPrice = hasVariants ? selectedVariant?.price : null
+        addToCart(product, quantity, variantName, variantPrice)
     }
 
     const inCart = isInCart(product.id)

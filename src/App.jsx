@@ -13,9 +13,10 @@ import SessionExpiryAlert from './components/SessionExpiryAlert'
 import Home from './pages/public/Home'
 import Products from './pages/public/Products'
 import ShoppingCart from './pages/public/ShoppingCart'
-import QuiienesSomos from './pages/public/QuiienesSomos'
+import QuienesSomos from './pages/public/QuienesSomos'
 import PuntosDeVenta from './pages/public/PuntosDeVenta'
 import Franquicias from './pages/public/Franquicias'
+import Contact from './pages/public/Contact'
 
 function PublicRoutes() {
   return (
@@ -23,10 +24,10 @@ function PublicRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/sabores" element={<Products />} />
       <Route path="/compras" element={<ShoppingCart />} />
-      <Route path="/quienes-somos" element={<QuiienesSomos />} />
+      <Route path="/quienes-somos" element={<QuienesSomos />} />
       <Route path="/puntos-de-venta" element={<PuntosDeVenta />} />
       <Route path="/franquicias" element={<Franquicias />} />
-      <Route path="/contactanos" element={<div className="p-8"><h1 className="text-2xl font-bold">Contáctanos</h1><p className="text-gray-600 mt-2">Escríbenos - Coming Soon</p></div>} />
+      <Route path="/contactanos" element={<Contact />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>
   )
