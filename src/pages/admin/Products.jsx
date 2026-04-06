@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { privateApi } from '../../services/api'
+import { uploadImage, deleteImage } from '../../services/supabase'
 import { sileo } from 'sileo'
+import { Icon } from '@iconify/react'
 
 function CategoryModal({ isOpen, onClose, categories, onSave, onDelete, onUpdate }) {
   const [newCategory, setNewCategory] = useState('')
@@ -224,6 +226,9 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
   const [variants, setVariants] = useState([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (editingProduct) {
@@ -236,6 +241,8 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
         image_url: editingProduct.image_url || '',
       })
       setVariants(editingProduct.variants || [])
+      setImagePreview(editingProduct.image_url || '')
+      setImageFile(null)
     } else {
       setFormData({
         name: '',
@@ -246,6 +253,8 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
         image_url: '',
       })
       setVariants([])
+      setImagePreview('')
+      setImageFile(null)
     }
   }, [editingProduct, categories])
 
@@ -255,6 +264,22 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => setImagePreview(e.target?.result || '')
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreview('')
+    setFormData(prev => ({ ...prev, image_url: '' }))
   }
 
   const handleVariantAdd = (variant) => {
@@ -285,8 +310,25 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
     setSaving(true)
     setError('')
     try {
+      let imageUrl = formData.image_url
+
+      if (imageFile) {
+        if (editingProduct?.image_url) {
+          await deleteImage('Products', editingProduct.image_url)
+        }
+        setUploading(true)
+        imageUrl = await uploadImage(imageFile, 'Products')
+        setUploading(false)
+        if (!imageUrl) {
+          setError('Error al subir la imagen')
+          setSaving(false)
+          return
+        }
+      }
+
       const productData = {
         ...formData,
+        image_url: imageUrl,
         price: formData.price ? parseFloat(formData.price) : null,
         price_varies: formData.price_varies || variants.length > 0,
         variants: formData.price_varies ? variants : [],
@@ -303,6 +345,8 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
           image_url: '',
         })
         setVariants([])
+        setImageFile(null)
+        setImagePreview('')
       }
     } catch (err) {
       setError(err.message)
@@ -366,15 +410,37 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">URL Imagen</label>
-          <input
-            type="text"
-            name="image_url"
-            value={formData.image_url}
-            onChange={handleChange}
-            placeholder="https://..."
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-1">Imagen del Producto</label>
+          <div className="flex flex-col gap-2">
+            {imagePreview ? (
+              <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                >
+                  ×
+                </button>
+              </div>
+            ) : (
+              <label className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <div className="text-center text-gray-400">
+                  <svg className="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span className="text-xs">Subir</span>
+                </div>
+              </label>
+            )}
+            {uploading && <span className="text-xs text-gray-500">Subiendo imagen...</span>}
+          </div>
         </div>
 
         <div className="flex flex-col gap-2 pt-4">
@@ -404,10 +470,10 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
         <div className="flex items-end gap-2">
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || uploading}
             className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50"
           >
-            {saving ? '...' : editingProduct ? 'Actualizar' : 'Guardar'}
+            {saving || uploading ? '...' : editingProduct ? 'Actualizar' : 'Guardar'}
           </button>
           {editingProduct && (
             <button
@@ -433,8 +499,9 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
   )
 }
 
-function ProductTable({ products, categories, onEdit, onDelete, filterCategory, filterExists }) {
+function ProductTable({ products, categories, onEdit, onDelete, filterCategory, setFilterCategory, filterExists, setFilterExists }) {
   const [expandedProducts, setExpandedProducts] = useState({})
+  const [openDropdown, setOpenDropdown] = useState(null)
 
   const getCategoryName = (categoryId) => {
     const cat = categories.find(c => c.id === categoryId)
@@ -455,16 +522,81 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
     }))
   }
 
+  const toggleDropdown = (dropdown) => {
+    setOpenDropdown(prev => prev === dropdown ? null : dropdown)
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Nombre</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 max-w-[200px]">Nombre</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Categoría</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Estado</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
+                <button
+                  onClick={() => toggleDropdown('category')}
+                  className="inline-flex items-center gap-1 hover:text-primary"
+                >
+                  Categoría
+                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+                </button>
+                {openDropdown === 'category' && (
+                  <div className="absolute z-10 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                    <div className="p-2">
+                      <button
+                        onClick={() => { setFilterCategory(''); setOpenDropdown(null) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterCategory ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Todas
+                      </button>
+                      {categories.map(cat => (
+                        <button
+                          key={cat.id}
+                          onClick={() => { setFilterCategory(cat.id); setOpenDropdown(null) }}
+                          className={`w-full text-left px-3 py-2 rounded text-sm ${filterCategory === cat.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                        >
+                          {cat.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
+                <button
+                  onClick={() => toggleDropdown('status')}
+                  className="inline-flex items-center gap-1 hover:text-primary"
+                >
+                  Estado
+                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+                </button>
+                {openDropdown === 'status' && (
+                  <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
+                    <div className="p-2">
+                      <button
+                        onClick={() => { setFilterExists(''); setOpenDropdown(null) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterExists ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Todos
+                      </button>
+                      <button
+                        onClick={() => { setFilterExists('added'); setOpenDropdown(null) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterExists === 'added' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Añadidos
+                      </button>
+                      <button
+                        onClick={() => { setFilterExists('pending'); setOpenDropdown(null) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterExists === 'pending' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Por añadir
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio Variable</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Variantes</th>
               <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">Acciones</th>
@@ -490,7 +622,9 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
                             className="w-10 h-10 rounded object-cover"
                           />
                         )}
-                        <span className="font-medium">{product.name}</span>
+                        <span className="font-medium truncate max-w-[150px]" title={product.name}>
+                          {product.name}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -523,15 +657,17 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => onEdit(product)}
-                        className="text-blue-600 hover:text-blue-700 mr-3"
+                        className="text-blue-600 hover:text-blue-700 p-1 inline-block"
+                        title="Editar"
                       >
-                        Editar
+                        <Icon icon="mdi:pencil" className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => onDelete(product.id)}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 p-1 inline-block ml-2"
+                        title="Eliminar"
                       >
-                        Eliminar
+                        <Icon icon="mdi:trash-can" className="w-5 h-5" />
                       </button>
                     </td>
                   </tr>
@@ -570,6 +706,13 @@ export default function Products() {
   const [error, setError] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
   const [filterExists, setFilterExists] = useState('')
+  const formRef = useRef(null)
+
+  useEffect(() => {
+    if (editingProduct && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [editingProduct])
 
   const fetchData = async () => {
     try {
@@ -594,6 +737,16 @@ export default function Products() {
   const handleSaveProduct = async (productData, variants) => {
     if (editingProduct) {
       await privateApi.updateProduct(editingProduct.id, productData)
+
+      if (editingProduct.variants) {
+        const originalIds = editingProduct.variants.map(v => v.id).filter(Boolean)
+        const newIds = variants.map(v => v.id).filter(Boolean)
+        const toDelete = originalIds.filter(id => !newIds.includes(id))
+
+        for (const id of toDelete) {
+          await privateApi.deleteProductVariant(id)
+        }
+      }
 
       if (productData.price_varies && variants) {
         for (const variant of variants) {
@@ -677,41 +830,13 @@ export default function Products() {
         <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg">{error}</div>
       )}
 
-      <ProductForm
-        categories={categories}
-        onSave={handleSaveProduct}
-        editingProduct={editingProduct}
-        onCancel={() => setEditingProduct(null)}
-      />
-
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <div className="flex flex-wrap gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">Todas</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-            <select
-              value={filterExists}
-              onChange={(e) => setFilterExists(e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">Todos</option>
-              <option value="added">Añadidos</option>
-              <option value="pending">Por añadir</option>
-            </select>
-          </div>
-        </div>
+      <div ref={formRef}>
+        <ProductForm
+          categories={categories}
+          onSave={handleSaveProduct}
+          editingProduct={editingProduct}
+          onCancel={() => setEditingProduct(null)}
+        />
       </div>
 
       <ProductTable
@@ -720,7 +845,9 @@ export default function Products() {
         onEdit={setEditingProduct}
         onDelete={handleDeleteProduct}
         filterCategory={filterCategory}
+        setFilterCategory={setFilterCategory}
         filterExists={filterExists}
+        setFilterExists={setFilterExists}
       />
 
       <CategoryModal

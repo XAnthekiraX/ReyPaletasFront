@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { privateApi } from '../../services/api'
+import { uploadImage, deleteImage } from '../../services/supabase'
 import { sileo } from 'sileo'
+import { Icon } from '@iconify/react'
 
 function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
   const [newCity, setNewCity] = useState('')
@@ -124,6 +126,9 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (editingFranchise) {
@@ -138,6 +143,8 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
         manager_description: editingFranchise.manager_description || '',
         coordinates: coords,
       })
+      setImagePreview(editingFranchise.manager_photo || '')
+      setImageFile(null)
     } else {
       setFormData({
         manager_name: '',
@@ -147,12 +154,30 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
         manager_description: '',
         coordinates: '',
       })
+      setImagePreview('')
+      setImageFile(null)
     }
   }, [editingFranchise, cities])
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => setImagePreview(e.target?.result || '')
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreview('')
+    setFormData(prev => ({ ...prev, manager_photo: '' }))
   }
 
   const handleSubmit = async (e) => {
@@ -187,11 +212,27 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
     setSaving(true)
     setError('')
     try {
+      let managerPhotoUrl = formData.manager_photo
+
+      if (imageFile) {
+        if (editingFranchise?.manager_photo) {
+          await deleteImage('ManagerFranchises', editingFranchise.manager_photo)
+        }
+        setUploading(true)
+        managerPhotoUrl = await uploadImage(imageFile, 'ManagerFranchises')
+        setUploading(false)
+        if (!managerPhotoUrl) {
+          setError('Error al subir la foto')
+          setSaving(false)
+          return
+        }
+      }
+
       const franchiseData = {
         manager_name: formData.manager_name,
         description: formData.description,
         city_id: formData.city_id || null,
-        manager_photo: formData.manager_photo || null,
+        manager_photo: managerPhotoUrl,
         manager_description: formData.manager_description || null,
         latitude,
         longitude,
@@ -207,6 +248,8 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
           manager_description: '',
           coordinates: '',
         })
+        setImageFile(null)
+        setImagePreview('')
       }
     } catch (err) {
       setError(err.message)
@@ -277,14 +320,32 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Foto URL</label>
-          <input
-            type="text"
-            name="manager_photo"
-            value={formData.manager_photo}
-            onChange={handleChange}
-            className="w-full px-2 py-1.5 border rounded text-sm"
-          />
+          <label className="block text-xs font-medium text-gray-700 mb-1">Foto del Gerente</label>
+          <div className="flex flex-col gap-2">
+            {imagePreview ? (
+              <div className="relative w-20 h-20 rounded-lg overflow-hidden border">
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                >
+                  ×
+                </button>
+              </div>
+            ) : (
+              <label className="flex items-center justify-center w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <Icon icon="mdi:chevron-down" className="w-6 h-6 text-gray-400 rotate-90" />
+              </label>
+            )}
+            {uploading && <span className="text-xs text-gray-500">Subiendo...</span>}
+          </div>
         </div>
 
         <div>
@@ -301,10 +362,10 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
         <div className="md:col-span-3 flex gap-2 pt-2">
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || uploading}
             className="px-4 py-1.5 bg-primary text-white rounded text-sm hover:bg-primary-hover disabled:opacity-50"
           >
-            {saving ? '...' : editingFranchise ? 'Actualizar' : 'Guardar'}
+            {saving || uploading ? '...' : editingFranchise ? 'Actualizar' : 'Guardar'}
           </button>
           {editingFranchise && (
             <button
@@ -321,13 +382,19 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
   )
 }
 
-function FranchiseTable({ franchises, cities, onEdit, onDelete }) {
+function FranchiseTable({ franchises, cities, onEdit, onDelete, filterCity, setFilterCity }) {
+  const [openDropdown, setOpenDropdown] = useState(false)
   const getCityName = (cityId) => {
     const city = cities.find(c => c.id === cityId)
     return city?.name || '-'
   }
 
-  if (!franchises.length) {
+  const filteredFranchises = franchises.filter(f => {
+    if (filterCity && f.city_id !== filterCity) return false
+    return true
+  })
+
+  if (!filteredFranchises.length) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 text-center text-gray-500 text-sm">
         No hay franquicias registradas
@@ -343,13 +410,42 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete }) {
             <tr>
               <th className="px-3 py-2 text-left font-semibold text-gray-600">Gerente</th>
               <th className="px-3 py-2 text-left font-semibold text-gray-600">Dirección</th>
-              <th className="px-3 py-2 text-left font-semibold text-gray-600">Ciudad</th>
+              <th className="px-3 py-2 text-left font-semibold text-gray-600 relative">
+                <button
+                  onClick={() => setOpenDropdown(!openDropdown)}
+                  className="inline-flex items-center gap-1 hover:text-primary"
+                >
+                  Ciudad
+                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+                </button>
+                {openDropdown && (
+                  <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
+                    <div className="p-2">
+                      <button
+                        onClick={() => { setFilterCity(''); setOpenDropdown(false) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterCity ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Todas
+                      </button>
+                      {cities.map(city => (
+                        <button
+                          key={city.id}
+                          onClick={() => { setFilterCity(city.id); setOpenDropdown(false) }}
+                          className={`w-full text-left px-3 py-2 rounded text-sm ${filterCity === city.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                        >
+                          {city.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </th>
               <th className="px-3 py-2 text-left font-semibold text-gray-600">Coords</th>
               <th className="px-3 py-2 text-right font-semibold text-gray-600">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {franchises.map((franchise) => (
+            {filteredFranchises.map((franchise) => (
               <tr key={franchise.id} className="hover:bg-gray-50">
                 <td className="px-3 py-2">{franchise.manager_name}</td>
                 <td className="px-3 py-2 text-gray-600">{franchise.description || '-'}</td>
@@ -360,8 +456,12 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete }) {
                     : '-'}
                 </td>
                 <td className="px-3 py-2 text-right">
-                  <button onClick={() => onEdit(franchise)} className="text-blue-600 hover:text-blue-700 mr-2">Editar</button>
-                  <button onClick={() => onDelete(franchise.id)} className="text-red-600 hover:text-red-700">Eliminar</button>
+                  <button onClick={() => onEdit(franchise)} className="text-blue-600 hover:text-blue-700 p-1 inline-block" title="Editar">
+                    <Icon icon="mdi:pencil" className="w-5 h-5" />
+                  </button>
+                  <button onClick={() => onDelete(franchise.id)} className="text-red-600 hover:text-red-700 p-1 inline-block ml-2" title="Eliminar">
+                    <Icon icon="mdi:trash-can" className="w-5 h-5" />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -379,6 +479,14 @@ export default function Franchises() {
   const [editingFranchise, setEditingFranchise] = useState(null)
   const [showCityModal, setShowCityModal] = useState(false)
   const [error, setError] = useState('')
+  const [filterCity, setFilterCity] = useState('')
+  const formRef = useRef(null)
+
+  useEffect(() => {
+    if (editingFranchise && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [editingFranchise])
 
   const fetchData = async () => {
     try {
@@ -468,18 +576,22 @@ export default function Franchises() {
 
       {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>}
 
-      <FranchiseForm
-        cities={cities}
-        onSave={handleSaveFranchise}
-        editingFranchise={editingFranchise}
-        onCancel={() => setEditingFranchise(null)}
-      />
+      <div ref={formRef}>
+        <FranchiseForm
+          cities={cities}
+          onSave={handleSaveFranchise}
+          editingFranchise={editingFranchise}
+          onCancel={() => setEditingFranchise(null)}
+        />
+      </div>
 
       <FranchiseTable
         franchises={franchises}
         cities={cities}
         onEdit={setEditingFranchise}
         onDelete={handleDeleteFranchise}
+        filterCity={filterCity}
+        setFilterCity={setFilterCity}
       />
 
       <CityModal

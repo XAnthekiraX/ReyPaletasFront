@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { privateApi } from '../../services/api'
+import { uploadImage, deleteImage } from '../../services/supabase'
 import { sileo } from 'sileo'
+import { Icon } from '@iconify/react'
 
 function AnnouncementPreview({ title, description, image_url }) {
   const hasContent = title || description || image_url
@@ -47,6 +49,9 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (editingAnnouncement) {
@@ -56,6 +61,8 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
         image_url: editingAnnouncement.image_url || '',
         active: editingAnnouncement.active ?? true,
       })
+      setImagePreview(editingAnnouncement.image_url || '')
+      setImageFile(null)
       onChange({
         title: editingAnnouncement.title || '',
         description: editingAnnouncement.description || '',
@@ -68,6 +75,8 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
         image_url: '',
         active: true,
       })
+      setImagePreview('')
+      setImageFile(null)
     }
   }, [editingAnnouncement])
 
@@ -85,6 +94,23 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
     })
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => setImagePreview(e.target?.result || '')
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreview('')
+    setFormData(prev => ({ ...prev, image_url: '' }))
+    onChange({ title: formData.title, description: formData.description, image_url: '' })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -96,14 +122,32 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
     setSaving(true)
     setError('')
     try {
-      await onSave(formData)
+      let imageUrl = formData.image_url
+
+      if (imageFile) {
+        if (editingAnnouncement?.image_url) {
+          await deleteImage('Announcements', editingAnnouncement.image_url)
+        }
+        setUploading(true)
+        imageUrl = await uploadImage(imageFile, 'Announcements')
+        setUploading(false)
+        if (!imageUrl) {
+          setError('Error al subir la imagen')
+          setSaving(false)
+          return
+        }
+      }
+
+      const announcementData = {
+        ...formData,
+        image_url: imageUrl,
+      }
+      await onSave(announcementData)
+
       if (!editingAnnouncement) {
-        setFormData({
-          title: '',
-          description: '',
-          image_url: '',
-          active: true,
-        })
+        setFormData({ title: '', description: '', image_url: '', active: true })
+        setImagePreview('')
+        setImageFile(null)
         onChange({ title: '', description: '', image_url: '' })
       }
     } catch (err) {
@@ -114,6 +158,7 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
   }
 
   return (
+
     <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 h-full">
       <h2 className="text-lg font-semibold mb-4">
         {editingAnnouncement ? 'Editar Aviso' : 'Nuevo Aviso'}
@@ -150,15 +195,32 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">URL de Imagen</label>
-          <input
-            type="text"
-            name="image_url"
-            value={formData.image_url}
-            onChange={handleChange}
-            placeholder="https://..."
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-1">Imagen del Aviso</label>
+          <div className="flex flex-col gap-2">
+            {imagePreview ? (
+              <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                >
+                  ×
+                </button>
+              </div>
+            ) : (
+              <label className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <Icon icon="mdi:chevron-down" className="w-8 h-8 text-gray-400 rotate-90" />
+              </label>
+            )}
+            {uploading && <span className="text-xs text-gray-500">Subiendo imagen...</span>}
+          </div>
         </div>
 
         <div>
@@ -177,10 +239,10 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
         <div className="flex gap-2 pt-2">
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || uploading}
             className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50"
           >
-            {saving ? '...' : editingAnnouncement ? 'Actualizar' : 'Guardar'}
+            {saving || uploading ? '...' : editingAnnouncement ? 'Actualizar' : 'Guardar'}
           </button>
           {editingAnnouncement && (
             <button
@@ -197,8 +259,16 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
   )
 }
 
-function AnnouncementTable({ announcements, onEdit, onDelete }) {
-  if (!announcements.length) {
+function AnnouncementTable({ announcements, onEdit, onDelete, filterActive, setFilterActive }) {
+  const [openDropdown, setOpenDropdown] = useState(false)
+
+  const filteredAnnouncements = announcements.filter(a => {
+    if (filterActive === 'active' && !a.active) return false
+    if (filterActive === 'inactive' && a.active) return false
+    return true
+  })
+
+  if (!filteredAnnouncements.length) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-8 text-center text-gray-500">
         No hay avisos publicados
@@ -215,12 +285,44 @@ function AnnouncementTable({ announcements, onEdit, onDelete }) {
               <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Título</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Descripción</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Imagen</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Estado</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
+                <button
+                  onClick={() => setOpenDropdown(!openDropdown)}
+                  className="inline-flex items-center gap-1 hover:text-primary"
+                >
+                  Estado
+                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+                </button>
+                {openDropdown && (
+                  <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
+                    <div className="p-2">
+                      <button
+                        onClick={() => { setFilterActive(''); setOpenDropdown(false) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterActive ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Todos
+                      </button>
+                      <button
+                        onClick={() => { setFilterActive('active'); setOpenDropdown(false) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterActive === 'active' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Activos
+                      </button>
+                      <button
+                        onClick={() => { setFilterActive('inactive'); setOpenDropdown(false) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterActive === 'inactive' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                      >
+                        Inactivos
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </th>
               <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {announcements.map((announcement) => (
+            {filteredAnnouncements.map((announcement) => (
               <tr key={announcement.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3">
                   <span className="font-medium">{announcement.title}</span>
@@ -242,26 +344,27 @@ function AnnouncementTable({ announcements, onEdit, onDelete }) {
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    announcement.active
+                  <span className={`px-2 py-1 rounded-full text-xs ${announcement.active
                       ? 'bg-green-100 text-green-700'
                       : 'bg-gray-100 text-gray-600'
-                  }`}>
+                    }`}>
                     {announcement.active ? 'Activo' : 'Inactivo'}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">
                   <button
                     onClick={() => onEdit(announcement)}
-                    className="text-blue-600 hover:text-blue-700 mr-3"
+                    className="text-blue-600 hover:text-blue-700 p-1 inline-block"
+                    title="Editar"
                   >
-                    Editar
+                    <Icon icon="mdi:pencil" className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => onDelete(announcement.id)}
-                    className="text-red-600 hover:text-red-700"
+                    className="text-red-600 hover:text-red-700 p-1 inline-block ml-2"
+                    title="Eliminar"
                   >
-                    Eliminar
+                    <Icon icon="mdi:trash-can" className="w-5 h-5" />
                   </button>
                 </td>
               </tr>
@@ -283,6 +386,14 @@ export default function Announcements() {
     description: '',
     image_url: '',
   })
+  const [filterActive, setFilterActive] = useState('')
+  const formRef = useRef(null)
+
+  useEffect(() => {
+    if (editingAnnouncement && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [editingAnnouncement])
 
   const fetchAnnouncements = async () => {
     try {
@@ -350,7 +461,7 @@ export default function Announcements() {
       )}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-        <div className="flex flex-col">
+        <div className="flex flex-col" ref={formRef}>
           <AnnouncementForm
             onSave={handleSaveAnnouncement}
             editingAnnouncement={editingAnnouncement}
@@ -385,6 +496,8 @@ export default function Announcements() {
             })
           }}
           onDelete={handleDeleteAnnouncement}
+          filterActive={filterActive}
+          setFilterActive={setFilterActive}
         />
       </div>
     </div>

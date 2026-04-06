@@ -73,3 +73,36 @@
 
 - [ ] 7.12 Configurar Vitest o Jest para tests unitarios
 - [ ] 7.13 Agregar tests para componentes críticos (AuthContext, API service)
+
+## Fase 8: Subida de Imágenes a Supabase
+
+### Configuración
+
+- [x] 8.1 Instalar `@supabase/supabase-js`
+- [ ] 8.2 Agregar VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY al .env
+- [ ] 8.3 Crear cliente Supabase en src/services/supabase.js
+
+### Funcionalidad de Upload
+
+- [ ] 8.4 Crear función uploadImage(file, bucket, folder) - retorna URL pública
+- [ ] 8.5 Crear función uploadMultipleImages(files, bucket, folder)
+
+### Admin Products
+
+- [ ] 8.6 Agregar input file con preview en formulario de productos
+- [ ] 8.7 Integrar upload antes de guardar y guardar URL en image_url
+
+### Admin Franchises
+
+- [ ] 8.8 Agregar input file para foto del gerente (manager_photo)
+- [ ] 8.9 Integrar upload y guardar URL
+
+### Admin Announcements
+
+- [ ] 8.10 Agregar input file para imagen del aviso
+- [ ] 8.11 Integrar upload y guardar URL
+
+### Verificación
+
+- [ ] 8.12 Probar upload en cada módulo
+- [ ] 8.13 Verificar URLs guardadas correctamente en la DB
