@@ -13,7 +13,7 @@ function CartItem({ item, onUpdateQuantity, onRemove }) {
           <img
             src={item.image_url}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">

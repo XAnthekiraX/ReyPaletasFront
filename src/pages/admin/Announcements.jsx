@@ -23,7 +23,7 @@ function AnnouncementPreview({ title, description, image_url }) {
             <img
               src={image_url}
               alt={title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         )}
@@ -199,7 +199,7 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
           <div className="flex flex-col gap-2">
             {imagePreview ? (
               <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
                 <button
                   type="button"
                   onClick={handleRemoveImage}
@@ -337,7 +337,7 @@ function AnnouncementTable({ announcements, onEdit, onDelete, filterActive, setF
                     <img
                       src={announcement.image_url}
                       alt={announcement.title}
-                      className="w-12 h-12 rounded object-cover"
+                      className="w-12 h-12 rounded object-contain"
                     />
                   ) : (
                     <span className="text-gray-400">-</span>

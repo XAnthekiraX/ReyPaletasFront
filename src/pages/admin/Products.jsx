@@ -414,7 +414,7 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
           <div className="flex flex-col gap-2">
             {imagePreview ? (
               <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
                 <button
                   type="button"
                   onClick={handleRemoveImage}
@@ -619,7 +619,7 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
                           <img
                             src={product.image_url}
                             alt={product.name}
-                            className="w-10 h-10 rounded object-cover"
+                            className="w-10 h-10 rounded object-contain"
                           />
                         )}
                         <span className="font-medium truncate max-w-[150px]" title={product.name}>

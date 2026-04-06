@@ -37,7 +37,7 @@ function HeroSection() {
                     <img
                         src={HERO_IMAGES[currentImage].url}
                         alt={HERO_IMAGES[currentImage].alt}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                 </motion.div>
@@ -149,7 +149,7 @@ function AnnouncementsSection() {
                                                 <img
                                                     src={announcements[currentIndex].image_url}
                                                     alt={announcements[currentIndex].title}
-                                                    className="w-full h-full object-cover"
+                                                    className="w-full h-full object-contain"
                                                 />
                                             </div>
                                         )}
@@ -191,7 +191,7 @@ function AnnouncementsSection() {
                                         <img
                                             src={announcements[0].image_url}
                                             alt={announcements[0].title}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-contain"
                                         />
                                     </div>
                                 )}
@@ -260,7 +260,7 @@ function UpcomingProductsSection() {
                     viewport={{ once: true }}
                     className="text-3xl md:text-4xl font-bold text-primary text-center mb-4"
                 >
-                    Próximamente
+                    Productos Futuros
                 </motion.h2>
                 <motion.p
                     initial={{ opacity: 0 }}
@@ -269,7 +269,7 @@ function UpcomingProductsSection() {
                     transition={{ delay: 0.1 }}
                     className="text-center text-gray-600 mb-10 max-w-2xl mx-auto"
                 >
-                    Mantente atento a nuestro menú,¡estos sabores pronto llegarán a tu paleta!
+                    Sabores que elevate tu paladar con texturas únicas y combinaciones inesperadas
                 </motion.p>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -284,11 +284,18 @@ function UpcomingProductsSection() {
                         >
                             <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-gray-100">
                                 {product.image_url ? (
-                                    <img
-                                        src={product.image_url}
-                                        alt={product.name}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                    />
+                                    <>
+                                        <img
+                                            src={product.image_url}
+                                            alt={product.name}
+                                            className="w-full h-full object-contain blur-md"
+                                        />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <span className="bg-primary/80 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                                                Próximamente
+                                            </span>
+                                        </div>
+                                    </>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                                         <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -296,7 +303,6 @@ function UpcomingProductsSection() {
                                         </svg>
                                     </div>
                                 )}
-                                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
                             </div>
                             <h3 className="font-semibold text-gray-800 text-center group-hover:text-primary transition-colors">
                                 {product.name}

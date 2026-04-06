@@ -324,7 +324,7 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
           <div className="flex flex-col gap-2">
             {imagePreview ? (
               <div className="relative w-20 h-20 rounded-lg overflow-hidden border">
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
                 <button
                   type="button"
                   onClick={handleRemoveImage}

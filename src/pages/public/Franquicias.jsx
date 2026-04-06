@@ -165,7 +165,7 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
                       <img
                         src={franchise.manager_photo}
                         alt={franchise.manager_name}
-                        className="w-8 h-8 rounded-full object-cover"
+                        className="w-8 h-8 rounded-full object-contain"
                       />
                     )}
                     <p className="font-bold text-base">{franchise.manager_name}</p>
@@ -225,7 +225,7 @@ function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
                   <img
                     src={franchise.manager_photo}
                     alt={franchise.manager_name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
@@ -318,7 +318,7 @@ function PhotoCarousel({ photos, franchiseName }) {
             <img
               src={photo.url}
               alt={`${franchiseName} - foto`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         ))}
@@ -341,7 +341,7 @@ function PhotoCarousel({ photos, franchiseName }) {
             <img
               src={photos[currentIndex].url}
               alt={`${franchiseName} - foto ${currentIndex + 1}`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </motion.div>
         </AnimatePresence>
@@ -371,7 +371,7 @@ function PhotoCarousel({ photos, franchiseName }) {
             <img
               src={photo.url}
               alt={`${franchiseName} - foto`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         ))}
