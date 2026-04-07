@@ -38,6 +38,12 @@ class ApiClient {
     try {
       const response = await fetch(url, config)
       
+      if (response.status === 401) {
+        this.clearToken()
+        window.dispatchEvent(new CustomEvent('auth:token-expired'))
+        throw new Error('Sesión expirada')
+      }
+
       if (!response.ok) {
         const error = await response.json().catch(() => ({}))
         throw new Error(error.message || `HTTP ${response.status}`)

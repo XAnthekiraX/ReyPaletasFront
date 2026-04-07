@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useAuth } from '../store/AuthContext'
 
@@ -10,6 +11,14 @@ export default function SessionExpiryAlert() {
     logout 
   } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const handleTokenExpired = () => {
+      logout()
+    }
+    window.addEventListener('auth:token-expired', handleTokenExpired)
+    return () => window.removeEventListener('auth:token-expired', handleTokenExpired)
+  }, [logout])
 
   const handleLogoutAndRedirect = () => {
     logout()

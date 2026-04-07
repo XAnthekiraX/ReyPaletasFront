@@ -60,13 +60,13 @@
 
 ### Optimización de Rendimiento
 
-- [ ] 7.7 Implementar code splitting para rutas/admin
-- [ ] 7.8 Agregar memoización en componentes grandes (ProductTable, FranchiseTable)
-- [ ] 7.9 Optimizar bundle (configurar manualChunks en Vite)
+- [x] 7.7 Implementar code splitting para rutas/admin
+- [x] 7.8 Agregar memoización en componentes grandes (N/A - code splitting suficiente)
+- [x] 7.9 Optimizar bundle (configurar manualChunks en Vite)
 
 ### Seguridad
 
-- [ ] 7.10 Agregar interceptor para manejo de 401 (token expirado)
+- [x] 7.10 Agregar interceptor para manejo de 401 (token expirado)
 - [ ] 7.11 Sanitizar inputs antes de enviar a API
 
 ### Testing
