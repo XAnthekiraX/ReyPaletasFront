@@ -9,6 +9,7 @@ function CategoryModal({ isOpen, onClose, categories, onSave, onDelete, onUpdate
   const [editingId, setEditingId] = useState(null)
   const [editingName, setEditingName] = useState('')
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(null)
   const [error, setError] = useState('')
 
   if (!isOpen) return null
@@ -39,6 +40,17 @@ function CategoryModal({ isOpen, onClose, categories, onSave, onDelete, onUpdate
       setError(err.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleDelete = async (id) => {
+    setDeleting(id)
+    try {
+      await onDelete(id)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeleting(null)
     }
   }
 
@@ -121,10 +133,11 @@ function CategoryModal({ isOpen, onClose, categories, onSave, onDelete, onUpdate
                           Editar
                         </button>
                         <button
-                          onClick={() => onDelete(cat.id)}
-                          className="text-red-600 hover:text-red-700 text-sm"
+                          onClick={() => handleDelete(cat.id)}
+                          disabled={deleting === cat.id}
+                          className="text-red-600 hover:text-red-700 text-sm disabled:opacity-50"
                         >
-                          Eliminar
+                          {deleting === cat.id ? 'Eliminando...' : 'Eliminar'}
                         </button>
                       </div>
                     </>

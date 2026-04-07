@@ -9,6 +9,7 @@ function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
   const [editingId, setEditingId] = useState(null)
   const [editingName, setEditingName] = useState('')
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(null)
   const [error, setError] = useState('')
 
   if (!isOpen) return null
@@ -39,6 +40,17 @@ function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
       setError(err.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleDelete = async (id) => {
+    setDeleting(id)
+    try {
+      await onDelete(id)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeleting(null)
     }
   }
 
@@ -101,7 +113,9 @@ function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
                       <span className="font-medium">{city.name}</span>
                       <div className="flex gap-2">
                         <button onClick={() => { setEditingId(city.id); setEditingName(city.name) }} className="text-blue-600 text-sm">Editar</button>
-                        <button onClick={() => onDelete(city.id)} className="text-red-600 text-sm">Eliminar</button>
+                        <button onClick={() => handleDelete(city.id)} disabled={deleting === city.id} className="text-red-600 text-sm disabled:opacity-50">
+                          {deleting === city.id ? 'Eliminando...' : 'Eliminar'}
+                        </button>
                       </div>
                     </>
                   )}

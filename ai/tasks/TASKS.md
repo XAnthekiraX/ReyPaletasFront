@@ -54,7 +54,7 @@
 
 ### Mejoras de UX
 
-- [ ] 7.4 Agregar estados de loading en modales de categoría/ciudad
+- [x] 7.4 Agregar estados de loading en modales de categoría/ciudad
 - [ ] 7.5 Validación en tiempo real del formato de coordenadas (Franchises)
 - [ ] 7.6 Agregar tooltips o ayuda contextual en campos complejos
 
