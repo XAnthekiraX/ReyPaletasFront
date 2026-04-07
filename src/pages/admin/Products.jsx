@@ -276,7 +276,10 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
     }
   }
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
+    if (editingProduct?.image_url) {
+      await deleteImage('Products', editingProduct.image_url)
+    }
     setImageFile(null)
     setImagePreview('')
     setFormData(prev => ({ ...prev, image_url: '' }))
@@ -324,6 +327,9 @@ function ProductForm({ categories, onSave, editingProduct, onCancel }) {
           setSaving(false)
           return
         }
+      } else if (editingProduct?.image_url && !formData.image_url) {
+        await deleteImage('Products', editingProduct.image_url)
+        imageUrl = ''
       }
 
       const productData = {

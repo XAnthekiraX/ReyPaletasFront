@@ -149,6 +149,13 @@ export const privateApi = {
   updateFranchise: (id, data) => api.putPrivate(`/private/franchises/${id}`, data),
   deleteFranchise: (id) => api.deletePrivate(`/private/franchises/${id}`),
 
+  // Franchise Photos
+  getFranchisePhotos: (franchiseId) => 
+    franchiseId ? api.getPrivate(`/private/franchise-photos?franchise_id=${franchiseId}`) : api.getPrivate('/private/franchise-photos'),
+  createFranchisePhoto: (data) => api.postPrivate('/private/franchise-photos', data),
+  updateFranchisePhoto: (id, data) => api.putPrivate(`/private/franchise-photos/${id}`, data),
+  deleteFranchisePhoto: (id) => api.deletePrivate(`/private/franchise-photos/${id}`),
+
   // Announcements
   getAnnouncements: () => api.getPrivate('/private/announcements'),
   createAnnouncement: (data) => api.postPrivate('/private/announcements', data),

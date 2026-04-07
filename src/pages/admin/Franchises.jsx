@@ -115,7 +115,7 @@ function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
   )
 }
 
-function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
+function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, onAddPhoto, onDeletePhoto }) {
   const [formData, setFormData] = useState({
     manager_name: '',
     description: '',
@@ -377,6 +377,17 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel }) {
             </button>
           )}
         </div>
+
+        {editingFranchise && (
+          <div className="md:col-span-3 mt-4">
+            <h3 className="text-sm font-semibold text-gray-800 mb-2">Fotos de la Franquicia</h3>
+            <FranchisePhotosManager
+              photos={photos}
+              onAddPhoto={onAddPhoto}
+              onDeletePhoto={onDeletePhoto}
+            />
+          </div>
+        )}
       </div>
     </form>
   )
@@ -441,6 +452,7 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete, filterCity, setF
                 )}
               </th>
               <th className="px-3 py-2 text-left font-semibold text-gray-600">Coords</th>
+              <th className="px-3 py-2 text-left font-semibold text-gray-600">Fotos</th>
               <th className="px-3 py-2 text-right font-semibold text-gray-600">Acciones</th>
             </tr>
           </thead>
@@ -454,6 +466,13 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete, filterCity, setF
                   {franchise.latitude && franchise.longitude
                     ? `${franchise.latitude}, ${franchise.longitude}`
                     : '-'}
+                </td>
+                <td className="px-3 py-2">
+                  {franchise.photos?.length > 0 && (
+                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium">
+                      {franchise.photos.length}
+                    </span>
+                  )}
                 </td>
                 <td className="px-3 py-2 text-right">
                   <button onClick={() => onEdit(franchise)} className="text-blue-600 hover:text-blue-700 p-1 inline-block" title="Editar">
@@ -472,6 +491,67 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete, filterCity, setF
   )
 }
 
+function FranchisePhotosManager({ photos, onAddPhoto, onDeletePhoto }) {
+  const [uploading, setUploading] = useState(false)
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setUploading(true)
+    try {
+      await onAddPhoto(file)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <div className="border rounded-lg p-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+        {photos.map((photo) => (
+          <div key={photo.id} className="relative group">
+            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+              <img src={photo.url} alt="Foto franquicia" className="w-full h-full object-contain" />
+            </div>
+            <button
+              onClick={() => onDeletePhoto(photo.id)}
+              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Eliminar"
+            >
+              <Icon icon="mdi:trash-can" className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+        
+        <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+            disabled={uploading}
+          />
+          <div className="text-center text-gray-400">
+            {uploading ? (
+              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary mx-auto" />
+            ) : (
+              <>
+                <Icon icon="mdi:plus" className="w-8 h-8 mx-auto" />
+                <span className="text-xs">Agregar</span>
+              </>
+            )}
+          </div>
+        </label>
+      </div>
+
+      {photos.length === 0 && (
+        <p className="text-gray-500 text-center text-sm">No hay fotos. Agrega la primera!</p>
+      )}
+    </div>
+  )
+}
+
 export default function Franchises() {
   const [franchises, setFranchises] = useState([])
   const [cities, setCities] = useState([])
@@ -480,6 +560,7 @@ export default function Franchises() {
   const [showCityModal, setShowCityModal] = useState(false)
   const [error, setError] = useState('')
   const [filterCity, setFilterCity] = useState('')
+  const [photos, setPhotos] = useState([])
   const formRef = useRef(null)
 
   useEffect(() => {
@@ -490,11 +571,20 @@ export default function Franchises() {
 
   const fetchData = async () => {
     try {
-      const [franchisesRes, citiesRes] = await Promise.all([
+      const [franchisesRes, citiesRes, photosRes] = await Promise.all([
         privateApi.getFranchises(),
         privateApi.getCities(),
+        privateApi.getFranchisePhotos(),
       ])
-      setFranchises(franchisesRes?.data || franchisesRes || [])
+      const franchisesData = franchisesRes?.data || franchisesRes || []
+      const photosData = photosRes?.data || photosRes || []
+      
+      const franchisesWithPhotos = franchisesData.map(f => ({
+        ...f,
+        photos: photosData.filter(p => p.franchise_id === f.id)
+      }))
+      
+      setFranchises(franchisesWithPhotos)
       setCities(citiesRes?.data || citiesRes || [])
     } catch (err) {
       console.error('Error fetching data:', err)
@@ -507,6 +597,58 @@ export default function Franchises() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (editingFranchise) {
+      const franchise = franchises.find(f => f.id === editingFranchise.id)
+      setPhotos(franchise?.photos || [])
+    } else {
+      setPhotos([])
+    }
+  }, [editingFranchise, franchises])
+
+  const handleAddPhoto = async (file) => {
+    if (!editingFranchise) return
+    
+    try {
+      const url = await uploadImage(file, 'Franchises')
+      if (!url) {
+        sileo.error({ title: 'Error al subir imagen' })
+        return
+      }
+      
+      await privateApi.createFranchisePhoto({
+        franchise_id: editingFranchise.id,
+        url,
+      })
+      
+      sileo.success({ title: 'Foto agregada exitosamente' })
+      await fetchData()
+      setPhotos(prev => [...prev, { id: Date.now(), url }])
+    } catch (err) {
+      console.error('Error adding photo:', err)
+      sileo.error({ title: 'Error al agregar foto' })
+    }
+  }
+
+  const handleDeletePhoto = async (photoId) => {
+    if (!confirm('¿Eliminar esta foto?')) return
+    
+    try {
+      const photo = photos.find(p => p.id === photoId)
+      if (photo?.url) {
+        await deleteImage('Franchises', photo.url)
+      }
+      
+      await privateApi.deleteFranchisePhoto(photoId)
+      sileo.success({ title: 'Foto eliminada exitosamente' })
+      await fetchData()
+      setPhotos(prev => prev.filter(p => p.id !== photoId))
+    } catch (err) {
+      console.error('Error deleting photo:', err)
+      sileo.error({ title: 'Error al eliminar foto' })
+    }
+  }
 
   const handleSaveFranchise = async (franchiseData) => {
     if (editingFranchise) {
@@ -582,6 +724,9 @@ export default function Franchises() {
           onSave={handleSaveFranchise}
           editingFranchise={editingFranchise}
           onCancel={() => setEditingFranchise(null)}
+          photos={photos}
+          onAddPhoto={handleAddPhoto}
+          onDeletePhoto={handleDeletePhoto}
         />
       </div>
 
