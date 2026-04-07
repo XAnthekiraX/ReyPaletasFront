@@ -3,6 +3,7 @@ import { privateApi } from '../../services/api'
 import { uploadImage, deleteImage } from '../../services/supabase'
 import { sileo } from 'sileo'
 import { Icon } from '@iconify/react'
+import { useConfirm } from '../../components/ConfirmDialog'
 
 function AnnouncementPreview({ title, description, image_url }) {
   const hasContent = title || description || image_url
@@ -375,6 +376,7 @@ export default function Announcements() {
   })
   const [filterActive, setFilterActive] = useState('')
   const formRef = useRef(null)
+  const { confirm, ConfirmDialog } = useConfirm()
 
   useEffect(() => {
     if (editingAnnouncement && formRef.current) {
@@ -412,20 +414,17 @@ export default function Announcements() {
   }
 
   const handleDeleteAnnouncement = async (id) => {
-    sileo.info({
+    confirm({
       title: '¿Eliminar este aviso?',
-      description: 'Esta acción no se puede deshacer',
-      action: {
-        label: 'Eliminar',
-        onClick: async () => {
-          try {
-            await privateApi.deleteAnnouncement(id)
-            sileo.success({ title: 'Aviso eliminado exitosamente' })
-            await fetchAnnouncements()
-          } catch {
-            sileo.error({ title: 'Error al eliminar aviso' })
-          }
-        },
+      message: 'Esta acción no se puede deshacer',
+      onConfirm: async () => {
+        try {
+          await privateApi.deleteAnnouncement(id)
+          sileo.success({ title: 'Aviso eliminado exitosamente' })
+          await fetchAnnouncements()
+        } catch {
+          sileo.error({ title: 'Error al eliminar aviso' })
+        }
       },
     })
   }
@@ -495,6 +494,8 @@ export default function Announcements() {
           setFilterActive={setFilterActive}
         />
       </div>
+
+      <ConfirmDialog />
     </div>
   )
 }

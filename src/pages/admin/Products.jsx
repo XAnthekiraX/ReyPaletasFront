@@ -3,6 +3,7 @@ import { privateApi } from '../../services/api'
 import { uploadImage, deleteImage } from '../../services/supabase'
 import { sileo } from 'sileo'
 import { Icon } from '@iconify/react'
+import { useConfirm } from '../../components/ConfirmDialog'
 
 function CategoryModal({ isOpen, onClose, categories, onSave, onDelete, onUpdate }) {
   const [newCategory, setNewCategory] = useState('')
@@ -672,6 +673,7 @@ export default function Products() {
   const [filterCategory, setFilterCategory] = useState('')
   const [filterExists, setFilterExists] = useState('')
   const formRef = useRef(null)
+  const { confirm, ConfirmDialog } = useConfirm()
 
   useEffect(() => {
     if (editingProduct && formRef.current) {
@@ -738,20 +740,17 @@ export default function Products() {
   }
 
   const handleDeleteProduct = async (id) => {
-    sileo.info({
+    confirm({
       title: '¿Eliminar este producto?',
-      description: 'Esta acción no se puede deshacer',
-      action: {
-        label: 'Eliminar',
-        onClick: async () => {
-          try {
-            await privateApi.deleteProduct(id)
-            sileo.success({ title: 'Producto eliminado exitosamente' })
-            await fetchData()
-          } catch {
-            sileo.error({ title: 'Error al eliminar producto' })
-          }
-        },
+      message: 'Esta acción no se puede deshacer',
+      onConfirm: async () => {
+        try {
+          await privateApi.deleteProduct(id)
+          sileo.success({ title: 'Producto eliminado exitosamente' })
+          await fetchData()
+        } catch {
+          sileo.error({ title: 'Error al eliminar producto' })
+        }
       },
     })
   }
@@ -769,20 +768,17 @@ export default function Products() {
   }
 
   const handleDeleteCategory = async (id) => {
-    sileo.info({
+    confirm({
       title: '¿Eliminar esta categoría?',
-      description: 'Se eliminarán todos los productos de esta categoría',
-      action: {
-        label: 'Eliminar',
-        onClick: async () => {
-          try {
-            await privateApi.deleteCategory(id)
-            sileo.success({ title: 'Categoría eliminada exitosamente' })
-            await fetchData()
-          } catch {
-            sileo.error({ title: 'Error al eliminar categoría' })
-          }
-        },
+      message: 'Se eliminarán todos los productos de esta categoría',
+      onConfirm: async () => {
+        try {
+          await privateApi.deleteCategory(id)
+          sileo.success({ title: 'Categoría eliminada exitosamente' })
+          await fetchData()
+        } catch {
+          sileo.error({ title: 'Error al eliminar categoría' })
+        }
       },
     })
   }
@@ -839,6 +835,8 @@ export default function Products() {
         onDelete={handleDeleteCategory}
         onUpdate={handleUpdateCategory}
       />
+
+      <ConfirmDialog />
     </div>
   )
 }
