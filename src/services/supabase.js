@@ -95,3 +95,14 @@ export async function deleteImage(bucket, url) {
 
   return true
 }
+
+export async function uploadMultipleImages(files, bucket = 'Products', folder = '') {
+  if (!files || files.length === 0) return []
+
+  const results = []
+  for (const file of files) {
+    const url = await uploadImage(file, bucket, folder)
+    results.push(url)
+  }
+  return results
+}
