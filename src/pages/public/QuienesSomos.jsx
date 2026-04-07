@@ -66,7 +66,7 @@ const allianceIcons = [
   { name: 'Estaciones de servicio', icon: 'mdi:gas-station' }
 ]
 
-function TimelineItem({ event, index, isLeft }) {
+function TimelineItem({ event, isLeft }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -88,12 +88,6 @@ function TimelineItem({ event, index, isLeft }) {
             <p className="text-gray-600 text-sm leading-relaxed">{event.description}</p>
           </div>
         </div>
-        
-        <div className="absolute left-11 md:left-1/2 transform md:-translate-x-1/2 -translate-x-1/2 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-lg z-10 flex-shrink-0" />
-        
-        {index < timelineEvents.length - 1 && (
-          <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-primary/20 -z-10" style={{ top: '2rem' }} />
-        )}
       </div>
     </motion.div>
   )
@@ -101,12 +95,11 @@ function TimelineItem({ event, index, isLeft }) {
 
 function Timeline() {
   return (
-    <div className="relative py-8 md:py-12 px-4">
+    <div className="relative  ">
       {timelineEvents.map((event, index) => (
         <TimelineItem
           key={event.year}
           event={event}
-          index={index}
           isLeft={index % 2 === 0}
         />
       ))}
@@ -127,7 +120,7 @@ function PhilosophyCard({ item, index }) {
         <Icon icon={item.icon} className="w-7 h-7 text-primary" />
       </div>
       <h3 className="text-xl font-bold text-gray-800 mb-3">{item.title}</h3>
-      
+
       {item.description ? (
         <p className="text-gray-600 leading-relaxed">{item.description}</p>
       ) : (
@@ -165,7 +158,7 @@ function AlliancesSection() {
         >
           Gracias a alianzas estratégicas con marcas locales, nuestros productos están presentes justo donde los ecuatorianos disfrutan sus mejores momentos.
         </motion.p>
-        
+
         <div className="flex flex-wrap justify-center gap-6 md:gap-10">
           {allianceIcons.map((item, index) => (
             <motion.div
@@ -218,13 +211,13 @@ function PurposeSection() {
 export default function QuiienesSomos() {
   return (
     <div className="min-h-screen bg-white">
-      <section className="py-16 md:py-24 bg-gradient-to-b from-primary/5 to-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <section className="py-16 md:py-10 qborder bg-gradient-to-b from-primary/5 to-white">
+        <div className="max-w-4xl mx-auto px-4 text-center flex flex-col gap-2">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-3xl md:text-5xl font-bold text-primary mb-4"
+            className="text-3xl md:text-5xl font-bold text-primary "
           >
             Nuestra Historia
           </motion.h1>
@@ -239,7 +232,7 @@ export default function QuiienesSomos() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto pb-16">
+      <section className="max-w-4xl mx-auto">
         <Timeline />
       </section>
 
@@ -253,7 +246,7 @@ export default function QuiienesSomos() {
           >
             Nuestra Filosofía
           </motion.h2>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             {philosophy.map((item, index) => (
               <PhilosophyCard key={item.title} item={item} index={index} />
