@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { privateApi } from '../../services/api'
 import { uploadImage, deleteImage } from '../../services/supabase'
 import { sileo } from 'sileo'
@@ -78,7 +78,7 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
       setImagePreview('')
       setImageFile(null)
     }
-  }, [editingAnnouncement])
+  }, [editingAnnouncement, onChange])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -427,9 +427,9 @@ export default function Announcements() {
     setPreviewData({ title: '', description: '', image_url: '' })
   }
 
-  const handlePreviewChange = (data) => {
+  const handlePreviewChange = useCallback((data) => {
     setPreviewData(data)
-  }
+  }, [])
 
   if (loading) {
     return (
