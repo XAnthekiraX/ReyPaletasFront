@@ -412,14 +412,22 @@ export default function Announcements() {
   }
 
   const handleDeleteAnnouncement = async (id) => {
-    if (!confirm('¿Estás seguro de eliminar este aviso?')) return
-    try {
-      await privateApi.deleteAnnouncement(id)
-      sileo.success({ title: 'Aviso eliminado exitosamente' })
-      await fetchAnnouncements()
-    } catch {
-      sileo.error({ title: 'Error al eliminar aviso' })
-    }
+    sileo.info({
+      title: '¿Eliminar este aviso?',
+      description: 'Esta acción no se puede deshacer',
+      action: {
+        label: 'Eliminar',
+        onClick: async () => {
+          try {
+            await privateApi.deleteAnnouncement(id)
+            sileo.success({ title: 'Aviso eliminado exitosamente' })
+            await fetchAnnouncements()
+          } catch {
+            sileo.error({ title: 'Error al eliminar aviso' })
+          }
+        },
+      },
+    })
   }
 
   const handleCancel = () => {

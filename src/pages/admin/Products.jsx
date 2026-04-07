@@ -725,14 +725,22 @@ export default function Products() {
   }
 
   const handleDeleteProduct = async (id) => {
-    if (!confirm('¿Estás seguro de eliminar este producto?')) return
-    try {
-      await privateApi.deleteProduct(id)
-      sileo.success({ title: 'Producto eliminado exitosamente' })
-      await fetchData()
-    } catch {
-      sileo.error({ title: 'Error al eliminar producto' })
-    }
+    sileo.info({
+      title: '¿Eliminar este producto?',
+      description: 'Esta acción no se puede deshacer',
+      action: {
+        label: 'Eliminar',
+        onClick: async () => {
+          try {
+            await privateApi.deleteProduct(id)
+            sileo.success({ title: 'Producto eliminado exitosamente' })
+            await fetchData()
+          } catch {
+            sileo.error({ title: 'Error al eliminar producto' })
+          }
+        },
+      },
+    })
   }
 
   const handleSaveCategory = async (data) => {
@@ -748,14 +756,22 @@ export default function Products() {
   }
 
   const handleDeleteCategory = async (id) => {
-    if (!confirm('¿Estás seguro de eliminar esta categoría?')) return
-    try {
-      await privateApi.deleteCategory(id)
-      sileo.success({ title: 'Categoría eliminada exitosamente' })
-      await fetchData()
-    } catch {
-      sileo.error({ title: 'Error al eliminar categoría' })
-    }
+    sileo.info({
+      title: '¿Eliminar esta categoría?',
+      description: 'Se eliminarán todos los productos de esta categoría',
+      action: {
+        label: 'Eliminar',
+        onClick: async () => {
+          try {
+            await privateApi.deleteCategory(id)
+            sileo.success({ title: 'Categoría eliminada exitosamente' })
+            await fetchData()
+          } catch {
+            sileo.error({ title: 'Error al eliminar categoría' })
+          }
+        },
+      },
+    })
   }
 
   if (loading) {

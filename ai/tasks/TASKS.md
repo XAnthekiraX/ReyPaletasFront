@@ -49,7 +49,7 @@
 ### Mejoras de Código
 
 - [x] 7.1 Corregir warning de lint en Announcements.jsx (useEffect missing dependency)
-- [ ] 7.2 Reemplazar confirm() nativos por Sileo en todas las páginas admin
+- [x] 7.2 Reemplazar confirm() nativos por Sileo en todas las páginas admin
 - [ ] 7.3 Agregar validación de formato URL en campos de imagen
 
 ### Mejoras de UX

@@ -619,22 +619,29 @@ export default function Franchises() {
   }
 
   const handleDeletePhoto = async (photoId) => {
-    if (!confirm('¿Eliminar esta foto?')) return
+    sileo.info({
+      title: '¿Eliminar esta foto?',
+      description: 'Esta acción no se puede deshacer',
+      action: {
+        label: 'Eliminar',
+        onClick: async () => {
+          try {
+            const photo = photos.find(p => p.id === photoId)
+            if (photo?.url) {
+              await deleteImage('Franchises', photo.url)
+            }
 
-    try {
-      const photo = photos.find(p => p.id === photoId)
-      if (photo?.url) {
-        await deleteImage('Franchises', photo.url)
-      }
-
-      await privateApi.deleteFranchisePhoto(photoId)
-      sileo.success({ title: 'Foto eliminada exitosamente' })
-      await fetchData()
-      setPhotos(prev => prev.filter(p => p.id !== photoId))
-    } catch (err) {
-      console.error('Error deleting photo:', err)
-      sileo.error({ title: 'Error al eliminar foto' })
-    }
+            await privateApi.deleteFranchisePhoto(photoId)
+            sileo.success({ title: 'Foto eliminada exitosamente' })
+            await fetchData()
+            setPhotos(prev => prev.filter(p => p.id !== photoId))
+          } catch (err) {
+            console.error('Error deleting photo:', err)
+            sileo.error({ title: 'Error al eliminar foto' })
+          }
+        },
+      },
+    })
   }
 
   const handleCancel = () => {
@@ -682,14 +689,22 @@ export default function Franchises() {
   }
 
   const handleDeleteFranchise = async (id) => {
-    if (!confirm('¿Eliminar esta franquicia?')) return
-    try {
-      await privateApi.deleteFranchise(id)
-      sileo.success({ title: 'Franquicia eliminada exitosamente' })
-      await fetchData()
-    } catch {
-      sileo.error({ title: 'Error al eliminar franquicia' })
-    }
+    sileo.info({
+      title: '¿Eliminar esta franquicia?',
+      description: 'Esta acción no se puede deshacer',
+      action: {
+        label: 'Eliminar',
+        onClick: async () => {
+          try {
+            await privateApi.deleteFranchise(id)
+            sileo.success({ title: 'Franquicia eliminada exitosamente' })
+            await fetchData()
+          } catch {
+            sileo.error({ title: 'Error al eliminar franquicia' })
+          }
+        },
+      },
+    })
   }
 
   const handleSaveCity = async (data) => {
@@ -705,14 +720,22 @@ export default function Franchises() {
   }
 
   const handleDeleteCity = async (id) => {
-    if (!confirm('¿Eliminar esta ciudad?')) return
-    try {
-      await privateApi.deleteCity(id)
-      sileo.success({ title: 'Ciudad eliminada exitosamente' })
-      await fetchData()
-    } catch {
-      sileo.error({ title: 'Error al eliminar ciudad' })
-    }
+    sileo.info({
+      title: '¿Eliminar esta ciudad?',
+      description: 'Se eliminarán todas las franquicias de esta ciudad',
+      action: {
+        label: 'Eliminar',
+        onClick: async () => {
+          try {
+            await privateApi.deleteCity(id)
+            sileo.success({ title: 'Ciudad eliminada exitosamente' })
+            await fetchData()
+          } catch {
+            sileo.error({ title: 'Error al eliminar ciudad' })
+          }
+        },
+      },
+    })
   }
 
   if (loading) {
