@@ -140,6 +140,7 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [coordsError, setCoordsError] = useState('')
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -176,6 +177,25 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+    
+    if (name === 'coordinates' && value.trim()) {
+      const parts = value.split(',').map(s => s.trim())
+      if (parts.length === 2) {
+        const lat = parseFloat(parts[0])
+        const lng = parseFloat(parts[1])
+        if (isNaN(lat) || isNaN(lng)) {
+          setCoordsError('Coordenadas inválidas: debe ser latitud,longitud')
+        } else if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+          setCoordsError('Coordenadas fuera de rango (lat: -90 a 90, lng: -180 a 180)')
+        } else {
+          setCoordsError('')
+        }
+      } else {
+        setCoordsError('Formato inválido: use latitud,longitud')
+      }
+    } else if (name === 'coordinates') {
+      setCoordsError('')
+    }
   }
 
   const handleImageChange = (e) => {
@@ -328,9 +348,11 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
             name="coordinates"
             value={formData.coordinates}
             onChange={handleChange}
-            placeholder="lat,lng"
-            className="w-full px-2 py-1.5 border rounded text-sm"
+            placeholder="lat,lng (ej: -0.180653,-78.467834)"
+            className={`w-full px-2 py-1.5 border rounded text-sm ${coordsError ? 'border-red-500' : ''}`}
           />
+          <p className="text-xs text-gray-500 mt-1">Formato: latitud,longitud (ej: -0.1807,-78.4678)</p>
+          {coordsError && <p className="text-xs text-red-500 mt-1">{coordsError}</p>}
         </div>
 
         <div>
