@@ -342,7 +342,12 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Coordenadas</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1 flex items-center gap-1">
+            Coordenadas
+            <span title="Ingresa latitud y longitud separados por coma (ej: -0.1807,-78.4678). Puedes obtenerlas desde Google Maps." className="cursor-help text-gray-400">
+              <Icon icon="mdi:information" className="w-4 h-4" />
+            </span>
+          </label>
           <input
             type="text"
             name="coordinates"

@@ -50,13 +50,13 @@
 
 - [x] 7.1 Corregir warning de lint en Announcements.jsx (useEffect missing dependency)
 - [x] 7.2 Reemplazar confirm() nativos por Sileo en todas las páginas admin
-- [ ] 7.3 Agregar validación de formato URL en campos de imagen
+- [x] 7.3 Agregar validación de formato URL en campos de imagen (N/A - se usa input file)
 
 ### Mejoras de UX
 
 - [x] 7.4 Agregar estados de loading en modales de categoría/ciudad
 - [x] 7.5 Validación en tiempo real del formato de coordenadas (Franchises)
-- [ ] 7.6 Agregar tooltips o ayuda contextual en campos complejos
+- [x] 7.6 Agregar tooltips o ayuda contextual en campos complejos
 
 ### Optimización de Rendimiento
 
