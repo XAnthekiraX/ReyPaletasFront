@@ -6,7 +6,6 @@ import PublicLayout from './layouts/PublicLayout'
 import AdminLayout from './layouts/AdminLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminLogin from './pages/admin/AdminLogin'
-import SessionExpiryAlert from './components/SessionExpiryAlert'
 import Home from './pages/public/Home'
 import Products from './pages/public/Products'
 import ShoppingCart from './pages/public/ShoppingCart'
@@ -107,7 +106,6 @@ function AppContent() {
         {PublicRoutes()}
         {AdminRoutes()}
       </Routes>
-      <SessionExpiryAlert />
     </>
   )
 }

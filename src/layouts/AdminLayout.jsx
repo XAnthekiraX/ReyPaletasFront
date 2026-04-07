@@ -4,6 +4,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { useAuth } from '../store/AuthContext'
 import { Toaster } from 'sileo'
+import SessionExpiryAlert from '../components/SessionExpiryAlert'
 
 const adminNavLinks = [
   { name: 'Dashboard', path: '/admin' },
@@ -192,6 +193,7 @@ function AdminLayout() {
           },
         }}
       />
+      <SessionExpiryAlert />
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminSidebarContent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
