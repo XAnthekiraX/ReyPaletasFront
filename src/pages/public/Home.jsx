@@ -37,7 +37,7 @@ function HeroSection() {
                     <img
                         src={HERO_IMAGES[currentImage].url}
                         alt={HERO_IMAGES[currentImage].alt}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                 </motion.div>
@@ -269,10 +269,10 @@ function UpcomingProductsSection() {
                     transition={{ delay: 0.1 }}
                     className="text-center text-gray-600 mb-10 max-w-2xl mx-auto"
                 >
-                    Sabores que elevate tu paladar con texturas únicas y combinaciones inesperadas
+                    Sabores y texturas únicas que elevan tu paladar a nuevas alturas. ¡Mantente atento a nuestras próximas delicias!
                 </motion.p>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="flex justify-around items-center gap-6 object-center">
                     {products.map((product, index) => (
                         <motion.div
                             key={index}
@@ -282,16 +282,16 @@ function UpcomingProductsSection() {
                             transition={{ delay: index * 0.1 }}
                             className="group"
                         >
-                            <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-gray-100">
+                            <div className="relative aspect-square rounded-xl overflow-hidden mb-3 p-5 bg-white">
                                 {product.image_url ? (
                                     <>
                                         <img
                                             src={product.image_url}
                                             alt={product.name}
-                                            className="w-full h-full object-contain blur-md"
+                                            className="w-full h-full object-contain blur-sm"
                                         />
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <span className="bg-primary/80 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                                            <span className="bg-primary/80 text-white px-4 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
                                                 Próximamente
                                             </span>
                                         </div>

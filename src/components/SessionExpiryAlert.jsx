@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useAuth } from '../store/AuthContext'
 
 export default function SessionExpiryAlert() {

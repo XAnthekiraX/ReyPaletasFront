@@ -268,110 +268,97 @@ function AnnouncementTable({ announcements, onEdit, onDelete, filterActive, setF
     return true
   })
 
-  if (!filteredAnnouncements.length) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm p-8 text-center text-gray-500">
-        No hay avisos publicados
-      </div>
-    )
-  }
+  const hasFilteredData = filteredAnnouncements.length > 0
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Título</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Descripción</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Imagen</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
-                <button
-                  onClick={() => setOpenDropdown(!openDropdown)}
-                  className="inline-flex items-center gap-1 hover:text-primary"
-                >
-                  Estado
-                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
-                </button>
-                {openDropdown && (
-                  <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
-                    <div className="p-2">
-                      <button
-                        onClick={() => { setFilterActive(''); setOpenDropdown(false) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterActive ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                      >
-                        Todos
-                      </button>
-                      <button
-                        onClick={() => { setFilterActive('active'); setOpenDropdown(false) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterActive === 'active' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                      >
-                        Activos
-                      </button>
-                      <button
-                        onClick={() => { setFilterActive('inactive'); setOpenDropdown(false) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterActive === 'inactive' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                      >
-                        Inactivos
-                      </button>
-                    </div>
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden min-h-[250px] max-h-[400px] overflow-y-auto">
+      <table className="w-full">
+        <thead className="bg-gray-50 sticky top-0">
+          <tr>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Título</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Descripción</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Imagen</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
+              <button
+                onClick={() => setOpenDropdown(!openDropdown)}
+                className="inline-flex items-center gap-1 hover:text-primary"
+              >
+                Estado
+                <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+              </button>
+              {openDropdown && (
+                <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
+                  <div className="p-2">
+                    <button
+                      onClick={() => { setFilterActive(''); setOpenDropdown(false) }}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${!filterActive ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                    >
+                      Todos
+                    </button>
+                    <button
+                      onClick={() => { setFilterActive('active'); setOpenDropdown(false) }}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${filterActive === 'active' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                    >
+                      Activos
+                    </button>
+                    <button
+                      onClick={() => { setFilterActive('inactive'); setOpenDropdown(false) }}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${filterActive === 'inactive' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                    >
+                      Inactivos
+                    </button>
                   </div>
+                </div>
+              )}
+            </th>
+            <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">Acciones</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {hasFilteredData ? filteredAnnouncements.map((announcement) => (
+            <tr key={announcement.id} className="hover:bg-gray-50">
+              <td className="px-4 py-3">
+                <span className="font-medium">{announcement.title}</span>
+              </td>
+              <td className="px-4 py-3">
+                <p className="text-sm text-gray-600 truncate max-w-xs">
+                  {announcement.description}
+                </p>
+              </td>
+              <td className="px-4 py-3">
+                {announcement.image_url ? (
+                  <img
+                    src={announcement.image_url}
+                    alt={announcement.title}
+                    className="w-12 h-12 rounded object-contain"
+                  />
+                ) : (
+                  <span className="text-gray-400">-</span>
                 )}
-              </th>
-              <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">Acciones</th>
+              </td>
+              <td className="px-4 py-3">
+                <span className={`px-2 py-1 rounded-full text-xs ${announcement.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                  {announcement.active ? 'Activo' : 'Inactivo'}
+                </span>
+              </td>
+              <td className="px-4 py-3 text-right">
+                <button onClick={() => onEdit(announcement)} className="text-blue-600 hover:text-blue-700 p-1 inline-block" title="Editar">
+                  <Icon icon="mdi:pencil" className="w-5 h-5" />
+                </button>
+                <button onClick={() => onDelete(announcement.id)} className="text-red-600 hover:text-red-700 p-1 inline-block ml-2" title="Eliminar">
+                  <Icon icon="mdi:trash-can" className="w-5 h-5" />
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredAnnouncements.map((announcement) => (
-              <tr key={announcement.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  <span className="font-medium">{announcement.title}</span>
-                </td>
-                <td className="px-4 py-3">
-                  <p className="text-sm text-gray-600 truncate max-w-xs">
-                    {announcement.description}
-                  </p>
-                </td>
-                <td className="px-4 py-3">
-                  {announcement.image_url ? (
-                    <img
-                      src={announcement.image_url}
-                      alt={announcement.title}
-                      className="w-12 h-12 rounded object-contain"
-                    />
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded-full text-xs ${announcement.active
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-600'
-                    }`}>
-                    {announcement.active ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button
-                    onClick={() => onEdit(announcement)}
-                    className="text-blue-600 hover:text-blue-700 p-1 inline-block"
-                    title="Editar"
-                  >
-                    <Icon icon="mdi:pencil" className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => onDelete(announcement.id)}
-                    className="text-red-600 hover:text-red-700 p-1 inline-block ml-2"
-                    title="Eliminar"
-                  >
-                    <Icon icon="mdi:trash-can" className="w-5 h-5" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          )) : (
+            <tr>
+              <td colSpan="4" className="px-4 py-8 text-center text-gray-500">
+                No hay avisos que coincidan con el filtro
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   )
 }

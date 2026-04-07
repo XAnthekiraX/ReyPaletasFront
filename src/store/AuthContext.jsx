@@ -11,7 +11,7 @@ const TOKEN_KEYS = {
   expiresAt: 'rey_paletas_token_expires_at',
 }
 
-const TOKEN_EXPIRY_WARNING_MS = 10000
+const TOKEN_EXPIRY_WARNING_MS = 30000
 
 function getStoredAuth() {
   try {

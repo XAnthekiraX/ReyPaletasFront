@@ -32,7 +32,7 @@ const contactInfo = {
 
 function VideoSection() {
   const videoId = 'eA6pF9YPavQ'
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -86,7 +86,7 @@ function ContactSection() {
           <h3 className="text-lg font-bold text-gray-800 mb-4">
             {contactInfo.title}
           </h3>
-          
+
           <div className="space-y-3 mb-6">
             {contactInfo.items.map((item, index) => (
               <div key={index} className="flex items-center justify-center gap-2 text-gray-600">
@@ -95,7 +95,7 @@ function ContactSection() {
               </div>
             ))}
           </div>
-          
+
           <Link
             to="/contactanos"
             className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-medium hover:bg-green-600 transition-colors"
@@ -118,7 +118,7 @@ export default function PuntosDeVenta() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-3xl md:text-5xl font-bold text-primary mb-4"
+            className="text-3xl md:text-5xl font-bold text-primary "
           >
             Expande tu negocio con Rey Paletas
           </motion.h1>
@@ -157,7 +157,7 @@ export default function PuntosDeVenta() {
           >
             ¿Por qué elegir Rey Paletas?
           </motion.h2>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             {benefits.map((benefit, index) => (
               <BenefitCard key={benefit.title} benefit={benefit} index={index} />

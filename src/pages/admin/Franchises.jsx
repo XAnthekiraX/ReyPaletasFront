@@ -115,7 +115,7 @@ function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
   )
 }
 
-function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, onAddPhoto, onDeletePhoto }) {
+function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pendingPhotos, onAddPendingPhotos, onRemovePendingPhoto, onDeletePhoto }) {
   const [formData, setFormData] = useState({
     manager_name: '',
     description: '',
@@ -380,10 +380,11 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, onA
 
         {editingFranchise && (
           <div className="md:col-span-3 mt-4">
-            <h3 className="text-sm font-semibold text-gray-800 mb-2">Fotos de la Franquicia</h3>
             <FranchisePhotosManager
               photos={photos}
-              onAddPhoto={onAddPhoto}
+              pendingPhotos={pendingPhotos}
+              onAddPendingPhotos={onAddPendingPhotos}
+              onRemovePendingPhoto={onRemovePendingPhoto}
               onDeletePhoto={onDeletePhoto}
             />
           </div>
@@ -405,116 +406,110 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete, filterCity, setF
     return true
   })
 
-  if (!filteredFranchises.length) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm p-6 text-center text-gray-500 text-sm">
-        No hay franquicias registradas
-      </div>
-    )
-  }
+  const hasFilteredData = filteredFranchises.length > 0
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-4">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-3 py-2 text-left font-semibold text-gray-600">Gerente</th>
-              <th className="px-3 py-2 text-left font-semibold text-gray-600">Dirección</th>
-              <th className="px-3 py-2 text-left font-semibold text-gray-600 relative">
-                <button
-                  onClick={() => setOpenDropdown(!openDropdown)}
-                  className="inline-flex items-center gap-1 hover:text-primary"
-                >
-                  Ciudad
-                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
-                </button>
-                {openDropdown && (
-                  <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
-                    <div className="p-2">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-4 min-h-[250px] max-h-[400px] overflow-y-auto">
+      <table className="w-full text-sm">
+        <thead className="bg-gray-50 sticky top-0">
+          <tr>
+            <th className="px-3 py-2 text-left font-semibold text-gray-600">Gerente</th>
+            <th className="px-3 py-2 text-left font-semibold text-gray-600">Dirección</th>
+            <th className="px-3 py-2 text-left font-semibold text-gray-600 relative">
+              <button
+                onClick={() => setOpenDropdown(!openDropdown)}
+                className="inline-flex items-center gap-1 hover:text-primary"
+              >
+                Ciudad
+                <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+              </button>
+              {openDropdown && (
+                <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
+                  <div className="p-2">
+                    <button
+                      onClick={() => { setFilterCity(''); setOpenDropdown(false) }}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${!filterCity ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                    >
+                      Todas
+                    </button>
+                    {cities.map(city => (
                       <button
-                        onClick={() => { setFilterCity(''); setOpenDropdown(false) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterCity ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
+                        key={city.id}
+                        onClick={() => { setFilterCity(city.id); setOpenDropdown(false) }}
+                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterCity === city.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
                       >
-                        Todas
+                        {city.name}
                       </button>
-                      {cities.map(city => (
-                        <button
-                          key={city.id}
-                          onClick={() => { setFilterCity(city.id); setOpenDropdown(false) }}
-                          className={`w-full text-left px-3 py-2 rounded text-sm ${filterCity === city.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                        >
-                          {city.name}
-                        </button>
-                      ))}
-                    </div>
+                    ))}
                   </div>
+                </div>
+              )}
+            </th>
+            <th className="px-3 py-2 text-left font-semibold text-gray-600">Coords</th>
+            <th className="px-3 py-2 text-left font-semibold text-gray-600">Fotos</th>
+            <th className="px-3 py-2 text-right font-semibold text-gray-600">Acciones</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {hasFilteredData ? filteredFranchises.map((franchise) => (
+            <tr key={franchise.id} className="hover:bg-gray-50">
+              <td className="px-3 py-2">{franchise.manager_name}</td>
+              <td className="px-3 py-2 text-gray-600">{franchise.description || '-'}</td>
+              <td className="px-3 py-2">{getCityName(franchise.city_id)}</td>
+              <td className="px-3 py-2 text-xs text-gray-500">
+                {franchise.latitude && franchise.longitude ? `${franchise.latitude}, ${franchise.longitude}` : '-'}
+              </td>
+              <td className="px-3 py-2">
+                {franchise.photos?.length > 0 && (
+                  <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium">
+                    {franchise.photos.length}
+                  </span>
                 )}
-              </th>
-              <th className="px-3 py-2 text-left font-semibold text-gray-600">Coords</th>
-              <th className="px-3 py-2 text-left font-semibold text-gray-600">Fotos</th>
-              <th className="px-3 py-2 text-right font-semibold text-gray-600">Acciones</th>
+              </td>
+              <td className="px-3 py-2 text-right">
+                <button onClick={() => onEdit(franchise)} className="text-blue-600 hover:text-blue-700 p-1 inline-block" title="Editar">
+                  <Icon icon="mdi:pencil" className="w-5 h-5" />
+                </button>
+                <button onClick={() => onDelete(franchise.id)} className="text-red-600 hover:text-red-700 p-1 inline-block ml-2" title="Eliminar">
+                  <Icon icon="mdi:trash-can" className="w-5 h-5" />
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredFranchises.map((franchise) => (
-              <tr key={franchise.id} className="hover:bg-gray-50">
-                <td className="px-3 py-2">{franchise.manager_name}</td>
-                <td className="px-3 py-2 text-gray-600">{franchise.description || '-'}</td>
-                <td className="px-3 py-2">{getCityName(franchise.city_id)}</td>
-                <td className="px-3 py-2 text-xs text-gray-500">
-                  {franchise.latitude && franchise.longitude
-                    ? `${franchise.latitude}, ${franchise.longitude}`
-                    : '-'}
-                </td>
-                <td className="px-3 py-2">
-                  {franchise.photos?.length > 0 && (
-                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium">
-                      {franchise.photos.length}
-                    </span>
-                  )}
-                </td>
-                <td className="px-3 py-2 text-right">
-                  <button onClick={() => onEdit(franchise)} className="text-blue-600 hover:text-blue-700 p-1 inline-block" title="Editar">
-                    <Icon icon="mdi:pencil" className="w-5 h-5" />
-                  </button>
-                  <button onClick={() => onDelete(franchise.id)} className="text-red-600 hover:text-red-700 p-1 inline-block ml-2" title="Eliminar">
-                    <Icon icon="mdi:trash-can" className="w-5 h-5" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          )) : (
+            <tr>
+              <td colSpan="5" className="px-3 py-6 text-center text-gray-500">
+                No hay franquicias que coincidan con el filtro
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   )
 }
 
-function FranchisePhotosManager({ photos, onAddPhoto, onDeletePhoto }) {
-  const [uploading, setUploading] = useState(false)
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    
-    setUploading(true)
-    try {
-      await onAddPhoto(file)
-    } finally {
-      setUploading(false)
-    }
-  }
-
+function FranchisePhotosManager({ photos, pendingPhotos, onAddPendingPhotos, onRemovePendingPhoto, onDeletePhoto }) {
   return (
     <div className="border rounded-lg p-4">
+      <div className="flex justify-between items-center mb-3">
+        <h4 className="text-sm font-semibold text-gray-800">Fotos de la Franquicia</h4>
+        <button
+          type="button"
+          onClick={onAddPendingPhotos}
+          className="px-3 py-1.5 bg-primary text-white rounded text-sm hover:bg-primary-hover"
+        >
+          Seleccionar Fotos
+        </button>
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         {photos.map((photo) => (
           <div key={photo.id} className="relative group">
-            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-transparent">
               <img src={photo.url} alt="Foto franquicia" className="w-full h-full object-contain" />
             </div>
             <button
+              type="button"
               onClick={() => onDeletePhoto(photo.id)}
               className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               title="Eliminar"
@@ -523,29 +518,25 @@ function FranchisePhotosManager({ photos, onAddPhoto, onDeletePhoto }) {
             </button>
           </div>
         ))}
-        
-        <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="hidden"
-            disabled={uploading}
-          />
-          <div className="text-center text-gray-400">
-            {uploading ? (
-              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary mx-auto" />
-            ) : (
-              <>
-                <Icon icon="mdi:plus" className="w-8 h-8 mx-auto" />
-                <span className="text-xs">Agregar</span>
-              </>
-            )}
+
+        {pendingPhotos.map((photo, index) => (
+          <div key={`pending-${index}`} className="relative group">
+            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-quaternary">
+              <img src={photo.preview} alt="Foto pendiente" className="w-full h-full object-contain" />
+            </div>
+            <button
+              type="button"
+              onClick={() => onRemovePendingPhoto(index)}
+              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-100 transition-opacity"
+              title="Eliminar"
+            >
+              <Icon icon="mdi:close" className="w-4 h-4" />
+            </button>
           </div>
-        </label>
+        ))}
       </div>
 
-      {photos.length === 0 && (
+      {photos.length === 0 && pendingPhotos.length === 0 && (
         <p className="text-gray-500 text-center text-sm">No hay fotos. Agrega la primera!</p>
       )}
     </div>
@@ -561,6 +552,7 @@ export default function Franchises() {
   const [error, setError] = useState('')
   const [filterCity, setFilterCity] = useState('')
   const [photos, setPhotos] = useState([])
+  const [pendingPhotos, setPendingPhotos] = useState([])
   const formRef = useRef(null)
 
   useEffect(() => {
@@ -578,12 +570,12 @@ export default function Franchises() {
       ])
       const franchisesData = franchisesRes?.data || franchisesRes || []
       const photosData = photosRes?.data || photosRes || []
-      
+
       const franchisesWithPhotos = franchisesData.map(f => ({
         ...f,
         photos: photosData.filter(p => p.franchise_id === f.id)
       }))
-      
+
       setFranchises(franchisesWithPhotos)
       setCities(citiesRes?.data || citiesRes || [])
     } catch (err) {
@@ -607,39 +599,34 @@ export default function Franchises() {
     }
   }, [editingFranchise, franchises])
 
-  const handleAddPhoto = async (file) => {
-    if (!editingFranchise) return
-    
-    try {
-      const url = await uploadImage(file, 'Franchises')
-      if (!url) {
-        sileo.error({ title: 'Error al subir imagen' })
-        return
-      }
-      
-      await privateApi.createFranchisePhoto({
-        franchise_id: editingFranchise.id,
-        url,
-      })
-      
-      sileo.success({ title: 'Foto agregada exitosamente' })
-      await fetchData()
-      setPhotos(prev => [...prev, { id: Date.now(), url }])
-    } catch (err) {
-      console.error('Error adding photo:', err)
-      sileo.error({ title: 'Error al agregar foto' })
-    }
+  const handleAddPendingPhotos = () => {
+    document.getElementById('franchise-pending-photos-input').click()
+  }
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files)
+    const previews = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }))
+    setPendingPhotos(prev => [...prev, ...previews])
+    e.target.value = ''
+  }
+
+  const handleRemovePendingPhoto = (index) => {
+    URL.revokeObjectURL(pendingPhotos[index].preview)
+    setPendingPhotos(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleDeletePhoto = async (photoId) => {
     if (!confirm('¿Eliminar esta foto?')) return
-    
+
     try {
       const photo = photos.find(p => p.id === photoId)
       if (photo?.url) {
         await deleteImage('Franchises', photo.url)
       }
-      
+
       await privateApi.deleteFranchisePhoto(photoId)
       sileo.success({ title: 'Foto eliminada exitosamente' })
       await fetchData()
@@ -650,16 +637,48 @@ export default function Franchises() {
     }
   }
 
-  const handleSaveFranchise = async (franchiseData) => {
-    if (editingFranchise) {
-      await privateApi.updateFranchise(editingFranchise.id, franchiseData)
-      sileo.success({ title: 'Franquicia actualizada exitosamente' })
-    } else {
-      await privateApi.createFranchise(franchiseData)
-      sileo.success({ title: 'Franquicia creada exitosamente' })
-    }
+  const handleCancel = () => {
+    pendingPhotos.forEach(p => URL.revokeObjectURL(p.preview))
+    setPendingPhotos([])
+    setPhotos([])
     setEditingFranchise(null)
-    await fetchData()
+  }
+
+  const handleSaveFranchise = async (franchiseData) => {
+    try {
+      let franchiseId = editingFranchise?.id
+
+      if (editingFranchise) {
+        await privateApi.updateFranchise(editingFranchise.id, franchiseData)
+        sileo.success({ title: 'Franquicia actualizada exitosamente' })
+      } else {
+        const response = await privateApi.createFranchise(franchiseData)
+        franchiseId = response.id
+        sileo.success({ title: 'Franquicia creada exitosamente' })
+      }
+
+      if (pendingPhotos.length > 0) {
+        for (const photo of pendingPhotos) {
+          const url = await uploadImage(photo.file, 'Franchises')
+          if (url) {
+            await privateApi.createFranchisePhoto({
+              franchise_id: franchiseId,
+              url,
+            })
+          }
+        }
+        sileo.success({ title: `${pendingPhotos.length} fotos agregadas` })
+      }
+
+      pendingPhotos.forEach(p => URL.revokeObjectURL(p.preview))
+      setPendingPhotos([])
+      setPhotos([])
+      setEditingFranchise(null)
+      await fetchData()
+    } catch (err) {
+      console.error('Error saving franchise:', err)
+      sileo.error({ title: 'Error al guardar franquicia' })
+    }
   }
 
   const handleDeleteFranchise = async (id) => {
@@ -723,12 +742,23 @@ export default function Franchises() {
           cities={cities}
           onSave={handleSaveFranchise}
           editingFranchise={editingFranchise}
-          onCancel={() => setEditingFranchise(null)}
+          onCancel={handleCancel}
           photos={photos}
-          onAddPhoto={handleAddPhoto}
+          pendingPhotos={pendingPhotos}
+          onAddPendingPhotos={handleAddPendingPhotos}
+          onRemovePendingPhoto={handleRemovePendingPhoto}
           onDeletePhoto={handleDeletePhoto}
         />
       </div>
+
+      <input
+        id="franchise-pending-photos-input"
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleFileSelect}
+        className="hidden"
+      />
 
       <FranchiseTable
         franchises={franchises}

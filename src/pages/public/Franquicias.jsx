@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import { publicApi } from '../../services/api'
 import { Icon } from '@iconify/react'
-import { AnimatePresence } from 'motion/react'
+// eslint-disable-next-line no-unused-vars
+import { motion, AnimatePresence } from 'motion/react'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 
@@ -72,11 +73,10 @@ function CityNav({ cities, selectedCity, onSelectCity }) {
       >
         <button
           onClick={() => onSelectCity(null)}
-          className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all duration-200 ${
-            selectedCity === null
-              ? 'bg-primary text-white shadow-md'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
+          className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all duration-200 ${selectedCity === null
+            ? 'bg-primary text-white shadow-md'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
         >
           Todas
         </button>
@@ -85,11 +85,10 @@ function CityNav({ cities, selectedCity, onSelectCity }) {
           <button
             key={city.id}
             onClick={() => onSelectCity(city.id)}
-            className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all duration-200 ${
-              selectedCity === city.id
-                ? 'bg-primary text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all duration-200 ${selectedCity === city.id
+              ? 'bg-primary text-white shadow-md'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
             {city.name}
           </button>
@@ -112,6 +111,18 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
   const defaultCenter = [-0.5, -78.5]
   const mapRef = useRef(null)
 
+  function MapUpdater({ center, zoom }) {
+    const map = useMap()
+
+    useEffect(() => {
+      if (center) {
+        map.setView(center, zoom, { animate: true })
+      }
+    }, [center, zoom, map])
+
+    return null
+  }
+
   const getCenter = () => {
     if (selectedFranchiseId && franchises.length === 1) {
       const selected = franchises.find(f => f.id === selectedFranchiseId)
@@ -131,7 +142,7 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
     return [avgLat, avgLng]
   }
 
-  const zoom = franchises.length === 1 ? 14 : 7
+  const zoom = franchises.length === 1 ? 20 : franchises.length <= 3 ? 6.5 : 8
 
   return (
     <div className="h-[300px] md:h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
@@ -147,6 +158,7 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <MapUpdater center={getCenter()} zoom={zoom} />
         {franchises.map((franchise) => {
           if (!franchise.latitude || !franchise.longitude) return null
 
@@ -209,23 +221,21 @@ function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
           <div
             key={franchise.id}
             onClick={() => onSelectFranchise(franchise.id)}
-            className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-              isSelected
-                ? 'bg-primary text-white shadow-lg'
-                : 'bg-white border border-gray-100 hover:shadow-md hover:border-gray-200'
-            }`}
+            className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${isSelected
+              ? 'bg-primary text-white shadow-lg'
+              : 'bg-white border border-gray-100 hover:shadow-md hover:border-gray-200'
+              }`}
           >
             <div className="flex gap-3">
               <div
-                className={`w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ${
-                  isSelected ? 'bg-white/20' : 'bg-gray-100'
-                }`}
+                className={`w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ${isSelected ? 'bg-white/20' : 'bg-gray-100'
+                  }`}
               >
                 {franchise.manager_photo ? (
                   <img
                     src={franchise.manager_photo}
                     alt={franchise.manager_name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
@@ -239,35 +249,31 @@ function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
 
               <div className="flex-1 min-w-0">
                 <h3
-                  className={`font-semibold text-sm truncate ${
-                    isSelected ? 'text-white' : 'text-gray-800'
-                  }`}
+                  className={`font-semibold text-sm truncate ${isSelected ? 'text-white' : 'text-gray-800'
+                    }`}
                 >
                   {franchise.manager_name}
                 </h3>
                 {franchise.manager_description && (
                   <p
-                    className={`text-xs truncate ${
-                      isSelected ? 'text-white/70' : 'text-gray-500'
-                    }`}
+                    className={`text-xs truncate ${isSelected ? 'text-white/70' : 'text-gray-500'
+                      }`}
                   >
                     {franchise.manager_description}
                   </p>
                 )}
                 {franchise.description && (
                   <p
-                    className={`text-xs truncate ${
-                      isSelected ? 'text-white/80' : 'text-gray-400'
-                    }`}
+                    className={`text-xs truncate ${isSelected ? 'text-white/80' : 'text-gray-400'
+                      }`}
                   >
                     {franchise.description}
                   </p>
                 )}
                 {franchise.city && (
                   <div
-                    className={`flex items-center gap-1 mt-1 ${
-                      isSelected ? 'text-white/80' : 'text-primary'
-                    }`}
+                    className={`flex items-center gap-1 mt-1 ${isSelected ? 'text-white/80' : 'text-primary'
+                      }`}
                   >
                     <Icon icon="tdesign:location" className="w-3 h-3" />
                     <span className="text-xs">{franchise.city}</span>
@@ -286,6 +292,67 @@ function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
   )
 }
 
+function DesktopCarousel({ photos, franchiseName }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  const totalSlides = Math.max(1, Math.ceil(photos.length / 3))
+
+  useEffect(() => {
+    if (photos.length > 3) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % totalSlides)
+      }, 4000)
+      return () => clearInterval(interval)
+    }
+  }, [photos.length, totalSlides])
+
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % totalSlides)
+  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
+
+  const visiblePhotos = photos.slice(currentIndex * 3, currentIndex * 3 + 3)
+
+  if (!photos || photos.length === 0) return null
+
+  return (
+    <div className="mt-4">
+      <div className="flex gap-2 items-center">
+        <button onClick={prevSlide} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <Icon icon="mdi:chevron-left" className="w-6 h-6 text-gray-600" />
+        </button>
+
+        <div className="flex gap-2 flex-1 justify-center">
+          {visiblePhotos.map((photo) => (
+            <div key={photo.id} className="w-48 h-32 rounded-lg overflow-hidden bg-gray-100">
+              <img
+                src={photo.url}
+                alt={`${franchiseName} - foto`}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          ))}
+        </div>
+
+        <button onClick={nextSlide} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <Icon icon="mdi:chevron-right" className="w-6 h-6 text-gray-600" />
+        </button>
+      </div>
+
+      {totalSlides > 1 && (
+        <div className="flex justify-center gap-2 mt-3">
+          {Array.from({ length: totalSlides }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all ${index === currentIndex ? 'bg-primary w-6' : 'bg-gray-300'
+                }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function PhotoCarousel({ photos, franchiseName }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
@@ -297,7 +364,7 @@ function PhotoCarousel({ photos, franchiseName }) {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  const isCarousel = isMobile ? photos.length > 1 : photos.length > 4
+  const isCarousel = isMobile ? photos.length > 1 : photos.length > 3
 
   useEffect(() => {
     if (photos.length > 1) {
@@ -350,9 +417,8 @@ function PhotoCarousel({ photos, franchiseName }) {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                index === currentIndex ? 'bg-primary w-6' : 'bg-gray-300'
-              }`}
+              className={`w-3 h-3 rounded-full transition-all ${index === currentIndex ? 'bg-primary w-6' : 'bg-gray-300'
+                }`}
             />
           ))}
         </div>
@@ -361,22 +427,7 @@ function PhotoCarousel({ photos, franchiseName }) {
   }
 
   return (
-    <div className="mt-4 overflow-hidden">
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {[...photos, ...photos, ...photos].map((photo, index) => (
-          <div
-            key={`${photo.id}-${index}`}
-            className="flex-shrink-0 w-48 h-32 rounded-lg overflow-hidden bg-gray-100"
-          >
-            <img
-              src={photo.url}
-              alt={`${franchiseName} - foto`}
-              className="w-full h-full object-contain"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
+    <DesktopCarousel photos={photos} franchiseName={franchiseName} />
   )
 }
 
@@ -478,9 +529,13 @@ export default function Franquicias() {
 
         {selectedCity && selectedFranchise && selectedFranchise.photos && (
           <div className="mt-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Fotos de {selectedFranchise.manager_name}
-            </h3>
+            {
+              selectedFranchise.photos.length < 1 ? (
+                <></>
+              ) : (<h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Fotos de {selectedFranchise.manager_name}
+              </h3>)
+            }
             <PhotoCarousel
               photos={selectedFranchise.photos}
               franchiseName={selectedFranchise.manager_name}

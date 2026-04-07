@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { privateApi } from '../../services/api'
 import { uploadImage, deleteImage } from '../../services/supabase'
 import { sileo } from 'sileo'
@@ -533,172 +533,118 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden min-h-[250px] max-h-[400px] overflow-y-auto">
+      <table className="w-full">
+        <thead className="bg-gray-50 sticky top-0">
+          <tr>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 max-w-[200px]">Nombre</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
+              <button onClick={() => toggleDropdown('category')} className="inline-flex items-center gap-1 hover:text-primary">
+                Categoría
+                <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+              </button>
+              {openDropdown === 'category' && (
+                <div className="absolute z-10 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                  <div className="p-2">
+                    <button onClick={() => { setFilterCategory(''); setOpenDropdown(null) }} className={`w-full text-left px-3 py-2 rounded text-sm ${!filterCategory ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}>
+                      Todas
+                    </button>
+                    {categories.map(cat => (
+                      <button key={cat.id} onClick={() => { setFilterCategory(cat.id); setOpenDropdown(null) }} className={`w-full text-left px-3 py-2 rounded text-sm ${filterCategory === cat.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}>
+                        {cat.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
+              <button onClick={() => toggleDropdown('status')} className="inline-flex items-center gap-1 hover:text-primary">
+                Estado
+                <Icon icon="mdi:chevron-down" className="w-4 h-4" />
+              </button>
+              {openDropdown === 'status' && (
+                <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
+                  <div className="p-2">
+                    <button onClick={() => { setFilterExists(''); setOpenDropdown(null) }} className={`w-full text-left px-3 py-2 rounded text-sm ${!filterExists ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}>
+                      Todos
+                    </button>
+                    <button onClick={() => { setFilterExists('added'); setOpenDropdown(null) }} className={`w-full text-left px-3 py-2 rounded text-sm ${filterExists === 'added' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}>
+                      Añadidos
+                    </button>
+                    <button onClick={() => { setFilterExists('pending'); setOpenDropdown(null) }} className={`w-full text-left px-3 py-2 rounded text-sm ${filterExists === 'pending' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}>
+                      Por añadir
+                    </button>
+                  </div>
+                </div>
+              )}
+            </th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio Variable</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Variantes</th>
+            <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">Acciones</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {filteredProducts.length === 0 ? (
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 max-w-[200px]">Nombre</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
-                <button
-                  onClick={() => toggleDropdown('category')}
-                  className="inline-flex items-center gap-1 hover:text-primary"
-                >
-                  Categoría
-                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
-                </button>
-                {openDropdown === 'category' && (
-                  <div className="absolute z-10 mt-2 w-48 bg-white border rounded-lg shadow-lg">
-                    <div className="p-2">
-                      <button
-                        onClick={() => { setFilterCategory(''); setOpenDropdown(null) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterCategory ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                      >
-                        Todas
-                      </button>
-                      {categories.map(cat => (
-                        <button
-                          key={cat.id}
-                          onClick={() => { setFilterCategory(cat.id); setOpenDropdown(null) }}
-                          className={`w-full text-left px-3 py-2 rounded text-sm ${filterCategory === cat.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                        >
-                          {cat.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
-                <button
-                  onClick={() => toggleDropdown('status')}
-                  className="inline-flex items-center gap-1 hover:text-primary"
-                >
-                  Estado
-                  <Icon icon="mdi:chevron-down" className="w-4 h-4" />
-                </button>
-                {openDropdown === 'status' && (
-                  <div className="absolute z-10 mt-2 w-40 bg-white border rounded-lg shadow-lg">
-                    <div className="p-2">
-                      <button
-                        onClick={() => { setFilterExists(''); setOpenDropdown(null) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${!filterExists ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                      >
-                        Todos
-                      </button>
-                      <button
-                        onClick={() => { setFilterExists('added'); setOpenDropdown(null) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterExists === 'added' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                      >
-                        Añadidos
-                      </button>
-                      <button
-                        onClick={() => { setFilterExists('pending'); setOpenDropdown(null) }}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${filterExists === 'pending' ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                      >
-                        Por añadir
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio Variable</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Variantes</th>
-              <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">Acciones</th>
+              <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
+                No hay productos que coincidan con el filtro
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredProducts.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
-                  No hay productos
+          ) : filteredProducts.map((product) => (
+            <Fragment key={product.id}>
+              <tr className="hover:bg-gray-50">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    {product.image_url && (
+                      <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded object-contain" />
+                    )}
+                    <span className="font-medium truncate max-w-[150px]" title={product.name}>{product.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">{product.price ? `$${product.price.toFixed(2)}` : '-'}</td>
+                <td className="px-4 py-3">{getCategoryName(product.category_id)}</td>
+                <td className="px-4 py-3">
+                  <span className={`px-2 py-1 rounded-full text-xs ${product.exists ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    {product.exists ? 'Añadido' : 'Por añadir'}
+                  </span>
+                </td>
+                <td className="px-4 py-3">{product.price_varies ? 'Sí' : 'No'}</td>
+                <td className="px-4 py-3">
+                  {product.variants?.length > 0 ? (
+                    <button onClick={() => toggleVariants(product.id)} className="text-primary hover:text-primary-hover text-sm underline">
+                      {expandedProducts[product.id] ? 'Ocultar' : `Ver (${product.variants.length})`}
+                    </button>
+                  ) : <span className="text-gray-400">-</span>}
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <button onClick={() => onEdit(product)} className="text-blue-600 hover:text-blue-700 p-1 inline-block" title="Editar">
+                    <Icon icon="mdi:pencil" className="w-5 h-5" />
+                  </button>
+                  <button onClick={() => onDelete(product.id)} className="text-red-600 hover:text-red-700 p-1 inline-block ml-2" title="Eliminar">
+                    <Icon icon="mdi:trash-can" className="w-5 h-5" />
+                  </button>
                 </td>
               </tr>
-            ) : (
-              filteredProducts.map((product) => (
-                <>
-                  <tr key={product.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {product.image_url && (
-                          <img
-                            src={product.image_url}
-                            alt={product.name}
-                            className="w-10 h-10 rounded object-contain"
-                          />
-                        )}
-                        <span className="font-medium truncate max-w-[150px]" title={product.name}>
-                          {product.name}
-                        </span>
+              {expandedProducts[product.id] && product.variants?.length > 0 && (
+                <tr key={`${product.id}-variants`}>
+                  <td colSpan="7" className="px-4 py-3 bg-gray-50">
+                    <div className="ml-8">
+                      <p className="text-sm font-medium text-gray-600 mb-2">Variantes:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {product.variants.map((variant, idx) => (
+                          <span key={idx} className="px-2 py-1 bg-white border rounded text-sm">{variant.name}: ${variant.price?.toFixed(2)}</span>
+                        ))}
                       </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      {product.price ? `$${product.price.toFixed(2)}` : '-'}
-                    </td>
-                    <td className="px-4 py-3">{getCategoryName(product.category_id)}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs ${product.exists
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                        }`}>
-                        {product.exists ? 'Añadido' : 'Por añadir'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {product.price_varies ? 'Sí' : 'No'}
-                    </td>
-                    <td className="px-4 py-3">
-                      {product.variants?.length > 0 ? (
-                        <button
-                          onClick={() => toggleVariants(product.id)}
-                          className="text-primary hover:text-primary-hover text-sm underline"
-                        >
-                          {expandedProducts[product.id] ? 'Ocultar' : `Ver (${product.variants.length})`}
-                        </button>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => onEdit(product)}
-                        className="text-blue-600 hover:text-blue-700 p-1 inline-block"
-                        title="Editar"
-                      >
-                        <Icon icon="mdi:pencil" className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => onDelete(product.id)}
-                        className="text-red-600 hover:text-red-700 p-1 inline-block ml-2"
-                        title="Eliminar"
-                      >
-                        <Icon icon="mdi:trash-can" className="w-5 h-5" />
-                      </button>
-                    </td>
-                  </tr>
-                  {expandedProducts[product.id] && product.variants?.length > 0 && (
-                    <tr key={`${product.id}-variants`}>
-                      <td colSpan="7" className="px-4 py-3 bg-gray-50">
-                        <div className="ml-8">
-                          <p className="text-sm font-medium text-gray-600 mb-2">Variantes:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {product.variants.map((variant, idx) => (
-                              <span key={idx} className="px-2 py-1 bg-white border rounded text-sm">
-                                {variant.name}: ${variant.price?.toFixed(2)}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </Fragment>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

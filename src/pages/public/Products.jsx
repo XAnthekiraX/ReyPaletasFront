@@ -112,8 +112,8 @@ function VariantSelector({ variants, selectedVariant, onSelectVariant }) {
                                 setIsOpen(false)
                             }}
                             className={`w-full px-3 py-2 text-left text-sm rounded-md transition-all ${selectedVariant?.name === variant.name
-                                    ? 'bg-primary text-white'
-                                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                                ? 'bg-primary text-white'
+                                : 'bg-white text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
                             {variant.name} - ${variant.price.toFixed(2)}
@@ -157,7 +157,7 @@ function ProductCard({ product }) {
     if (inCart) {
         return (
             <div className="bg-gray-50 rounded-2xl p-4 flex flex-col h-full border-2 border-green-200">
-                <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-gray-200">
+                <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary p-4">
                     {product.image_url ? (
                         <img
                             src={product.image_url}
@@ -190,7 +190,7 @@ function ProductCard({ product }) {
 
     return (
         <div className="bg-white rounded-2xl p-4 flex flex-col h-full shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-gray-100">
+            <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-gray-100 p-4">
                 {product.image_url ? (
                     <img
                         src={product.image_url}
@@ -260,7 +260,7 @@ export default function Products() {
     const [loading, setLoading] = useState(true)
     const [loadingProducts, setLoadingProducts] = useState(false)
 
-    const products = selectedCategory 
+    const products = selectedCategory
         ? allProducts.filter(p => p.category_id === selectedCategory)
         : allProducts
 
