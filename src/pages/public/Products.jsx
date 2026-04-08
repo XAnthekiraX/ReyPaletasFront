@@ -58,7 +58,7 @@ function CategoryNav({ categories, selectedCategory, onSelectCategory }) {
                     Todos
                 </button>
 
-                {categories.map((category) => (
+                {categories.filter(cat => cat.name !== 'Otras').map((category) => (
                     <button
                         key={category.id}
                         onClick={() => onSelectCategory(category.id)}
