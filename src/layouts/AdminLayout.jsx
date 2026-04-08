@@ -180,7 +180,7 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-primary/10">
-      <Toaster 
+      <Toaster
         position="top-right"
         options={{
           fill: "#1f2937",

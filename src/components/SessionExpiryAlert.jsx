@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
 import { useAuth } from '../store/AuthContext'
+import { AnimatePresence } from 'motion/react'
 
 export default function SessionExpiryAlert() {
-  const { 
-    showExpiryWarning, 
-    showExpiryModal, 
-    handleRefreshSession, 
-    logout 
+  const {
+    showExpiryWarning,
+    showExpiryModal,
+    handleRefreshSession,
+    logout
   } = useAuth()
   const navigate = useNavigate()
 
@@ -87,7 +87,7 @@ export default function SessionExpiryAlert() {
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
           >
             <div className="text-center">
-              <motion.div 
+              <motion.div
                 className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}

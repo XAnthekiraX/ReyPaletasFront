@@ -142,7 +142,7 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
     return [avgLat, avgLng]
   }
 
-  const zoom = franchises.length === 1 ? 20 : franchises.length <= 3 ? 6.5 : 8
+  const zoom = franchises.length === 1 ? 20 : franchises.length > 1 ? 7 : 8
 
   return (
     <div className="h-[300px] md:h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
@@ -292,24 +292,39 @@ function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
   )
 }
 
-function DesktopCarousel({ photos, franchiseName }) {
+function DesktopCarousel({ photos, franchiseName, onImageClick }) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [direction, setDirection] = useState(0)
 
-  const totalSlides = Math.max(1, Math.ceil(photos.length / 3))
+  const totalPhotos = photos.length
+  const visibleCount = 5
+  const shouldAutoPlay = totalPhotos > visibleCount
+
+  const visiblePhotos = []
+  for (let i = 0; i < visibleCount; i++) {
+    const index = (currentIndex + i) % totalPhotos
+    visiblePhotos.push({ ...photos[index], displayIndex: index })
+  }
 
   useEffect(() => {
-    if (photos.length > 3) {
+    if (shouldAutoPlay) {
       const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % totalSlides)
+        setDirection(1)
+        setCurrentIndex((prev) => (prev + 1) % totalPhotos)
       }, 4000)
       return () => clearInterval(interval)
     }
-  }, [photos.length, totalSlides])
+  }, [shouldAutoPlay, totalPhotos])
 
-  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % totalSlides)
-  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
+  const nextSlide = () => {
+    setDirection(1)
+    setCurrentIndex((prev) => (prev + 1) % totalPhotos)
+  }
 
-  const visiblePhotos = photos.slice(currentIndex * 3, currentIndex * 3 + 3)
+  const prevSlide = () => {
+    setDirection(-1)
+    setCurrentIndex((prev) => (prev - 1 + totalPhotos) % totalPhotos)
+  }
 
   if (!photos || photos.length === 0) return null
 
@@ -320,16 +335,27 @@ function DesktopCarousel({ photos, franchiseName }) {
           <Icon icon="mdi:chevron-left" className="w-6 h-6 text-gray-600" />
         </button>
 
-        <div className="flex gap-2 flex-1 justify-center">
-          {visiblePhotos.map((photo) => (
-            <div key={photo.id} className="w-48 h-32 rounded-lg overflow-hidden bg-gray-100">
-              <img
-                src={photo.url}
-                alt={`${franchiseName} - foto`}
-                className="w-full h-full object-contain"
-              />
-            </div>
-          ))}
+        <div className="flex gap-2 flex-1 justify-center overflow-hidden">
+          <AnimatePresence mode="popLayout">
+            {visiblePhotos.map((photo) => (
+              <motion.div
+                key={photo.id}
+                initial={{ x: direction > 0 ? 100 : -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: direction > 0 ? -100 : 100, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className={`w-40 h-40 rounded-lg overflow-hidden bg-gray-100 cursor-pointer flex-shrink-0`}
+                onClick={() => onImageClick(photo.displayIndex)}
+              >
+                <img
+                  src={photo.url}
+                  alt={`${franchiseName} - foto`}
+                  loading="lazy"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
 
         <button onClick={nextSlide} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -337,13 +363,16 @@ function DesktopCarousel({ photos, franchiseName }) {
         </button>
       </div>
 
-      {totalSlides > 1 && (
+      {shouldAutoPlay && (
         <div className="flex justify-center gap-2 mt-3">
-          {Array.from({ length: totalSlides }).map((_, index) => (
+          {photos.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all ${index === currentIndex ? 'bg-primary w-6' : 'bg-gray-300'
+              onClick={() => {
+                setDirection(index > currentIndex ? 1 : -1)
+                setCurrentIndex(index)
+              }}
+              className={`h-2 rounded-full transition-all ${index === currentIndex ? 'bg-primary w-6' : 'bg-gray-300 w-3'
                 }`}
             />
           ))}
@@ -353,7 +382,7 @@ function DesktopCarousel({ photos, franchiseName }) {
   )
 }
 
-function PhotoCarousel({ photos, franchiseName }) {
+function PhotoCarousel({ photos, franchiseName, onImageClick }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -381,11 +410,16 @@ function PhotoCarousel({ photos, franchiseName }) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
         {photos.map((photo) => (
-          <div key={photo.id} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+          <div
+            key={photo.id}
+            className="aspect-square rounded-lg overflow-hidden bg-gray-100 cursor-pointer"
+            onClick={() => onImageClick(photos.indexOf(photo))}
+          >
             <img
               src={photo.url}
               alt={`${franchiseName} - foto`}
-              className="w-full h-full object-contain"
+              loading="lazy"
+              className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
             />
           </div>
         ))}
@@ -403,12 +437,14 @@ function PhotoCarousel({ photos, franchiseName }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.5 }}
-            className="aspect-video rounded-lg overflow-hidden bg-gray-100"
+            className="aspect-video rounded-lg overflow-hidden bg-gray-100 cursor-pointer"
+            onClick={() => onImageClick(currentIndex)}
           >
             <img
               src={photos[currentIndex].url}
               alt={`${franchiseName} - foto ${currentIndex + 1}`}
-              className="w-full h-full object-contain"
+              loading="lazy"
+              className="w-full h-full object-cover"
             />
           </motion.div>
         </AnimatePresence>
@@ -427,7 +463,7 @@ function PhotoCarousel({ photos, franchiseName }) {
   }
 
   return (
-    <DesktopCarousel photos={photos} franchiseName={franchiseName} />
+    <DesktopCarousel photos={photos} franchiseName={franchiseName} onImageClick={onImageClick} />
   )
 }
 
@@ -437,14 +473,20 @@ export default function Franquicias() {
   const [selectedCity, setSelectedCity] = useState(null)
   const [selectedFranchiseId, setSelectedFranchiseId] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalImageIndex, setModalImageIndex] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const citiesData = await publicApi.getCities()
+        const [citiesData, franchisesData] = await Promise.all([
+          publicApi.getCities(),
+          publicApi.getFranchises()
+        ])
         setCities(citiesData || [])
+        setFranchises(franchisesData || [])
       } catch (error) {
-        console.error('Error fetching cities:', error)
+        console.error('Error fetching data:', error)
       } finally {
         setLoading(false)
       }
@@ -452,30 +494,59 @@ export default function Franquicias() {
     fetchData()
   }, [])
 
-  useEffect(() => {
-    const fetchFranchises = async () => {
-      try {
-        const data = await publicApi.getFranchises(selectedCity)
-        const franchisesData = data || []
-        setFranchises(franchisesData)
+  const filteredFranchises = selectedCity 
+    ? franchises.filter(f => f.city && f.city.toLowerCase() === cities.find(c => c.id === selectedCity)?.name?.toLowerCase())
+    : franchises
 
-        if (selectedCity && franchisesData.length > 0) {
-          setSelectedFranchiseId(franchisesData[0].id)
-        } else if (!selectedCity) {
-          setSelectedFranchiseId(null)
-        }
-      } catch (error) {
-        console.error('Error fetching franchises:', error)
-      }
+  useEffect(() => {
+    if (filteredFranchises.length > 0) {
+      setSelectedFranchiseId(filteredFranchises[0].id)
+    } else {
+      setSelectedFranchiseId(null)
     }
-    fetchFranchises()
-  }, [selectedCity])
+  }, [selectedCity, filteredFranchises])
 
   const handleSelectFranchise = (franchiseId) => {
     setSelectedFranchiseId(franchiseId)
   }
 
-  const selectedFranchise = franchises.find(f => f.id === selectedFranchiseId)
+  const selectedFranchise = filteredFranchises.find(f => f.id === selectedFranchiseId)
+
+  const openModal = (index) => {
+    setModalImageIndex(index)
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+  }
+
+  const nextImage = () => {
+    if (selectedFranchise?.photos) {
+      setModalImageIndex((prev) => (prev + 1) % selectedFranchise.photos.length)
+    }
+  }
+
+  const prevImage = () => {
+    if (selectedFranchise?.photos) {
+      setModalImageIndex((prev) => (prev - 1 + selectedFranchise.photos.length) % selectedFranchise.photos.length)
+    }
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!modalOpen) return
+      if (e.key === 'ArrowRight') {
+        setModalImageIndex(prev => selectedFranchise ? (prev + 1) % selectedFranchise.photos.length : prev)
+      }
+      if (e.key === 'ArrowLeft') {
+        setModalImageIndex(prev => selectedFranchise ? (prev - 1 + selectedFranchise.photos.length) % selectedFranchise.photos.length : prev)
+      }
+      if (e.key === 'Escape') closeModal()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [modalOpen, selectedFranchise])
 
   if (loading) {
     return (
@@ -516,12 +587,12 @@ export default function Franquicias() {
 
         <div className="grid md:grid-cols-2 gap-4 h-[400px] md:h-[500px]">
           <FranchiseList
-            franchises={franchises}
+            franchises={filteredFranchises}
             selectedFranchiseId={selectedFranchiseId}
             onSelectFranchise={handleSelectFranchise}
           />
           <FranchiseMap
-            franchises={franchises}
+            franchises={filteredFranchises}
             selectedFranchiseId={selectedFranchiseId}
             onSelectFranchise={handleSelectFranchise}
           />
@@ -539,9 +610,65 @@ export default function Franquicias() {
             <PhotoCarousel
               photos={selectedFranchise.photos}
               franchiseName={selectedFranchise.manager_name}
+              onImageClick={openModal}
             />
           </div>
         )}
+
+        <AnimatePresence>
+          {modalOpen && selectedFranchise?.photos && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+              onClick={closeModal}
+            >
+              <button
+                className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+                onClick={closeModal}
+              >
+                <Icon icon="mdi:close" className="w-8 h-8" />
+              </button>
+
+              {selectedFranchise.photos.length > 1 && (
+                <>
+                  <button
+                    className="absolute left-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+                    onClick={(e) => { e.stopPropagation(); prevImage() }}
+                  >
+                    <Icon icon="mdi:chevron-left" className="w-10 h-10" />
+                  </button>
+                  <button
+                    className="absolute right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+                    onClick={(e) => { e.stopPropagation(); nextImage() }}
+                  >
+                    <Icon icon="mdi:chevron-right" className="w-10 h-10" />
+                  </button>
+                </>
+              )}
+
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="max-w-4xl max-h-[90vh]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={selectedFranchise.photos[modalImageIndex].url}
+                  alt={`${selectedFranchise.manager_name} - foto ${modalImageIndex + 1}`}
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                />
+                {selectedFranchise.photos.length > 1 && (
+                  <p className="text-center text-white mt-4 text-sm">
+                    {modalImageIndex + 1} / {selectedFranchise.photos.length}
+                  </p>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
     </div>
   )
