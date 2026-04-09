@@ -551,8 +551,8 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
       <table className="w-full">
         <thead className="bg-gray-50 sticky top-0">
           <tr>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 max-w-[200px]">Nombre</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 max-w-[200px]">Imagen</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 hidden md:table-cell">Precio</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
               <button onClick={() => toggleDropdown('category')} className="inline-flex items-center gap-1 hover:text-primary">
                 Categoría
@@ -594,15 +594,15 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
                 </div>
               )}
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Precio Variable</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Variantes</th>
-            <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">Acciones</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 hidden md:table-cell">Precio Variable</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 hidden md:table-cell">Variantes</th>
+            <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600"> Gestión</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {filteredProducts.length === 0 ? (
             <tr>
-              <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
+              <td colSpan="3" className="px-4 py-8 text-center text-gray-500">
                 No hay productos que coincidan con el filtro
               </td>
             </tr>
@@ -614,18 +614,18 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
                     {product.image_url && (
                       <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded object-contain" />
                     )}
-                    <span className="font-medium truncate max-w-[150px]" title={product.name}>{product.name}</span>
+                    <span className="font-medium truncate max-w-[150px] hidden md:inline" title={product.name}>{product.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3">{product.price ? `$${product.price.toFixed(2)}` : '-'}</td>
+                <td className="px-4 py-3 hidden md:table-cell">{product.price ? `$${product.price.toFixed(2)}` : '-'}</td>
                 <td className="px-4 py-3">{getCategoryName(product.category_id)}</td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-1 rounded-full text-xs ${product.exists ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                     {product.exists ? 'Añadido' : 'Por añadir'}
                   </span>
                 </td>
-                <td className="px-4 py-3">{product.price_varies ? 'Sí' : 'No'}</td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 hidden md:table-cell">{product.price_varies ? 'Sí' : 'No'}</td>
+                <td className="px-4 py-3 hidden md:table-cell">
                   {product.variants?.length > 0 ? (
                     <button onClick={() => toggleVariants(product.id)} className="text-primary hover:text-primary-hover text-sm underline">
                       {expandedProducts[product.id] ? 'Ocultar' : `Ver (${product.variants.length})`}
@@ -643,7 +643,7 @@ function ProductTable({ products, categories, onEdit, onDelete, filterCategory, 
               </tr>
               {expandedProducts[product.id] && product.variants?.length > 0 && (
                 <tr key={`${product.id}-variants`}>
-                  <td colSpan="7" className="px-4 py-3 bg-gray-50">
+                  <td colSpan="3" className="px-4 py-3 bg-gray-50">
                     <div className="ml-8">
                       <p className="text-sm font-medium text-gray-600 mb-2">Variantes:</p>
                       <div className="flex flex-wrap gap-2">
