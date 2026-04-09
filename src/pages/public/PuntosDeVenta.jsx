@@ -98,9 +98,9 @@ function ContactSection() {
 
           <Link
             to="/contactanos"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-medium hover:bg-green-600 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-quaternary/80 text-white rounded-xl font-medium hover:bg-quaternary transition-colors"
           >
-            <Icon icon="ic:baseline-whatsapp" className="w-5 h-5" />
+            <Icon icon="tabler:mail" className="w-5 h-5" />
             Contáctanos
           </Link>
         </motion.div>

@@ -157,7 +157,7 @@ function ProductCard({ product }) {
     if (inCart) {
         return (
             <div className="bg-gray-50 rounded-2xl p-4 flex flex-col h-full border-2 border-green-200">
-                <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary p-4">
+                <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-gray-200 p-4">
                     {product.image_url ? (
                         <img
                             src={product.image_url}
