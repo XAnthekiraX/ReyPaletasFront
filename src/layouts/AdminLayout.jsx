@@ -77,7 +77,7 @@ w-64 bg-primary text-white min-h-screen
                   to={link.path}
                   onClick={onClose}
                   className={`block px-6 py-3 text-sm transition-colors ${isActive
-                    ? 'bg-primary text-white'
+                    ? 'bg-primary-hover text-quaternary font-bold'
                     : 'text-white hover:bg-primary-hover'
                     }`}
                 >
@@ -114,7 +114,7 @@ w-64 bg-primary text-white min-h-screen
                 key={link.path}
                 to={link.path}
                 className={`block px-6 py-3 text-sm transition-colors ${isActive
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary-hover text-quaternary font-bold'
                   : 'text-white hover:bg-primary-hover'
                   }`}
               >
