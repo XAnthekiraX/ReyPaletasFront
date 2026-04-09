@@ -10,21 +10,21 @@ function AnnouncementPreview({ title, description, image_url }) {
 
   if (!hasContent) {
     return (
-      <div className="bg-gray-100 rounded-2xl p-8 text-center h-full flex items-center justify-center min-h-[200px]">
+      <div className="bg-gray-100 rounded-2xl p-8 text-center h-full w-full flex items-center justify-center min-h-[200px]">
         <p className="text-gray-400">La previsualización se mostrará aquí</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-full">
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-auto h-auto">
       <div className="md:flex h-full">
         {image_url && (
-          <div className="md:w-1/2 h-64 md:h-auto">
+          <div className="w-auto md:w-1/2 h-64 md:h-auto">
             <img
               src={image_url}
               alt={title}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
         )}
@@ -100,7 +100,15 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
     if (file) {
       setImageFile(file)
       const reader = new FileReader()
-      reader.onload = (e) => setImagePreview(e.target?.result || '')
+      reader.onload = (e) => {
+        const result = e.target?.result || ''
+        setImagePreview(result)
+        onChange({
+          title: formData.title,
+          description: formData.description,
+          image_url: result,
+        })
+      }
       reader.readAsDataURL(file)
     }
   }
@@ -277,7 +285,7 @@ function AnnouncementTable({ announcements, onEdit, onDelete, filterActive, setF
         <thead className="bg-gray-50 sticky top-0">
           <tr>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Título</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Descripción</th>
+            <th className="md:px-4 md:py-3 w-0 md:w-auto  overflow-hidden flex text-left text-sm font-semibold text-gray-600">Descripción</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Imagen</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 relative">
               <button
@@ -321,8 +329,8 @@ function AnnouncementTable({ announcements, onEdit, onDelete, filterActive, setF
               <td className="px-4 py-3">
                 <span className="font-medium">{announcement.title}</span>
               </td>
-              <td className="px-4 py-3">
-                <p className="text-sm text-gray-600 truncate max-w-xs">
+              <td className="md:px-4 md:py-3 w-0 md:w-auto  overflow-hidden flex ">
+                <p className="text-sm text-gray-600 truncate max-w-xs max-h-25 overflow-y-auto text-wrap">
                   {announcement.description}
                 </p>
               </td>
@@ -464,16 +472,18 @@ export default function Announcements() {
           />
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col ">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-700">Previsualización</h3>
             <span className="text-xs text-gray-400">Se actualiza automáticamente</span>
           </div>
-          <AnnouncementPreview
-            title={previewData.title}
-            description={previewData.description}
-            image_url={previewData.image_url}
-          />
+          <div className='w-full h-full flex justify-center items-center'>
+            <AnnouncementPreview
+              title={previewData.title}
+              description={previewData.description}
+              image_url={previewData.image_url}
+            />
+          </div>
         </div>
       </div>
 
