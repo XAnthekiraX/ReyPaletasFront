@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'motion/react'
 import { publicApi } from '../../services/api'
+import { Icon } from '@iconify/react'
 
 const HERO_IMAGES = [
     { id: 1, url: 'https://vmlaixvlmiiyucesmgpj.supabase.co/storage/v1/object/public/HeroImages/Hero1.webp', alt: 'Helado artesanal 1' },
@@ -55,7 +56,7 @@ function HeroSection() {
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 font-display">
                         Rey Paletas
                     </h1>
-                    <p className="text-xl md:text-2xl text-gray-200 font-display">
+                    <p className="text-xl md:text-2xl text-white font-display">
                         {HERO_PHRASE}
                     </p>
                 </motion.div>
@@ -279,7 +280,7 @@ function UpcomingProductsSection() {
                     Sabores y texturas únicas que elevan tu paladar a nuevas alturas. ¡Mantente atento a nuestras próximas delicias!
                 </motion.p>
 
-                <div className="flex justify-around items-center gap-6 object-center">
+                <div className="flex flex-col md:flex-row justify-center items-center gap-6 ">
                     {products.map((product, index) => (
                         <motion.div
                             key={index}
@@ -305,9 +306,7 @@ function UpcomingProductsSection() {
                                     </>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                        <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
+                                        <Icon icon="lucide:popsicle" />
                                     </div>
                                 )}
                             </div>

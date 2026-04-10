@@ -91,7 +91,7 @@ function AnnouncementForm({ onSave, editingAnnouncement, onCancel, onChange }) {
     onChange({
       title: newData.title,
       description: newData.description,
-      image_url: newData.image_url,
+      image_url: newData.image_url || imagePreview,
     })
   }
 

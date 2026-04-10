@@ -106,3 +106,19 @@
 
 - [ ] 8.12 Probar upload en cada módulo
 - [ ] 8.13 Verificar URLs guardadas correctamente en la DB
+
+## Fase 9: Cambios Visuales y Estructurales
+
+### Admin Franquicias
+
+- [ ] 9.1 Eliminar campos photo, description y name de los datos mostrados en tabla de franquicias
+- [ ] 9.2 Agregar selector de puntos de venta como franquicia con mapa
+- [ ] 9.3 Implementar 2 pestañas: "Obtener un punto de venta" y "Ubicaciones"
+
+### Public Footer
+
+- [ ] 9.4 Cambiar slogan del footer por "Una delicia real"
+
+### Public Hero
+
+- [ ] 9.5 Reemplazar nombre de marca por logo en el Hero

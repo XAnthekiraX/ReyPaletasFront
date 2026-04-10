@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import SVG from "../assets/logo.svg?react";
 // eslint-disable-next-line no-unused-vars
@@ -225,11 +225,22 @@ function Footer() {
   )
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
+  return null
+}
+
 function PublicLayout() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
+        <ScrollToTop />
         <Outlet />
       </main>
       <Footer />

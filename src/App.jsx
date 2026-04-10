@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { AuthProvider, useAuth } from './store/AuthContext'
 import { CartProvider } from './context/CartContext'
 import PublicLayout from './layouts/PublicLayout'
@@ -90,7 +90,11 @@ function AdminRoutes() {
 }
 
 function AppContent() {
-  const { isLoading } = useAuth()
+  const { isLoading, setDebugExpiryTime } = useAuth()
+
+  useEffect(() => {
+    window.__REY_PALETAS_AUTH__ = { setDebugExpiryTime }
+  }, [setDebugExpiryTime])
 
   if (isLoading) {
     return (

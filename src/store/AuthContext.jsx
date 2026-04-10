@@ -155,6 +155,13 @@ export function AuthProvider({ children }) {
     logoutRef.current()
   }, [])
 
+  const setDebugExpiryTime = useCallback((ms) => {
+    const expiresAt = Date.now() + ms
+    localStorage.setItem(TOKEN_KEYS.expiresAt, expiresAt.toString())
+    setShowExpiryWarning(false)
+    setShowExpiryModal(false)
+  }, [])
+
   useEffect(() => {
     checkAuth()
   }, [checkAuth])
@@ -238,6 +245,7 @@ export function AuthProvider({ children }) {
     showExpiryModal,
     handleRefreshSession,
     handleLogout,
+    setDebugExpiryTime,
   }
 
   return (
