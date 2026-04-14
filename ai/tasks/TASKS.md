@@ -111,7 +111,7 @@
 
 ### Admin Franquicias
 
-- [ ] 9.1 Eliminar campos photo, description y name de los datos mostrados en tabla de franquicias
+- [x] 9.1 Eliminar campos photo, description y name de los datos mostrados en tabla de franquicias
 - [ ] 9.2 Agregar selector de puntos de venta como franquicia con mapa
 - [ ] 9.3 Implementar 2 pestañas: "Obtener un punto de venta" y "Ubicaciones"
 

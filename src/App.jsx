@@ -18,6 +18,7 @@ const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
 const AdminProducts = lazy(() => import('./pages/admin/Products'))
 const AdminAnnouncements = lazy(() => import('./pages/admin/Announcements'))
 const AdminFranchises = lazy(() => import('./pages/admin/Franchises'))
+const AdminHeroImages = lazy(() => import('./pages/admin/HeroImages'))
 
 function AdminLoading() {
   return (
@@ -73,6 +74,13 @@ function AdminRoutes() {
           <ProtectedRoute>
             <Suspense fallback={<AdminLoading />}>
               <AdminFranchises />
+            </Suspense>
+          </ProtectedRoute>
+        } />
+        <Route path="hero-images" element={
+          <ProtectedRoute>
+            <Suspense fallback={<AdminLoading />}>
+              <AdminHeroImages />
             </Suspense>
           </ProtectedRoute>
         } />

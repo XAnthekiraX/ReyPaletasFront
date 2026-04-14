@@ -171,7 +171,7 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
           <div className='flex flex-col justify-center items-center lg:items-start gap-2'>
             <SVG className="fill-secondary h-8" />
-            <p className="text-tertiary text-2xl font-handwriting">El relleno de tu vida</p>
+            <p className="text-tertiary text-2xl font-handwriting">Una delicia real</p>
             <div className='flex w-auto justify-center lg:items-start items-center gap-2.5'>
               {
                 socialNetworks.map((items, index) => {

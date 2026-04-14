@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { publicApi } from '../../services/api'
 import { Icon } from '@iconify/react'
 
-const HERO_IMAGES = [
+const FALLBACK_HERO_IMAGES = [
     { id: 1, url: 'https://vmlaixvlmiiyucesmgpj.supabase.co/storage/v1/object/public/HeroImages/Hero1.webp', alt: 'Helado artesanal 1' },
     { id: 2, url: 'https://vmlaixvlmiiyucesmgpj.supabase.co/storage/v1/object/public/HeroImages/Hero2.webp', alt: 'Helado artesanal 2' },
     { id: 3, url: 'https://vmlaixvlmiiyucesmgpj.supabase.co/storage/v1/object/public/HeroImages/Hero3.webp', alt: 'Helado artesanal 3' },
@@ -18,13 +18,53 @@ const HERO_PHRASE = "Eleva tu antojo con paletas artesanales rellenas de sabor p
 
 function HeroSection() {
     const [currentImage, setCurrentImage] = useState(0)
+    const [heroImages, setHeroImages] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        const fetchHeroImages = async () => {
+            try {
+                const data = await publicApi.getHeroImages()
+                if (data && data.length > 0) {
+                    setHeroImages(data.map((img, idx) => ({
+                        id: img.id,
+                        url: img.url,
+                        alt: `Helado artesanal ${idx + 1}`
+                    })))
+                } else {
+                    setHeroImages(FALLBACK_HERO_IMAGES)
+                }
+            } catch (error) {
+                console.error('Error fetching hero images:', error)
+                setHeroImages(FALLBACK_HERO_IMAGES)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchHeroImages()
+    }, [])
+
+    useEffect(() => {
+        if (heroImages.length === 0) return
         const interval = setInterval(() => {
-            setCurrentImage((prev) => (prev + 1) % HERO_IMAGES.length)
+            setCurrentImage((prev) => (prev + 1) % heroImages.length)
         }, 5000)
         return () => clearInterval(interval)
-    }, [])
+    }, [heroImages.length])
+
+    if (loading) {
+        return (
+            <section className="relative h-[70vh] md:h-[80vh] overflow-hidden bg-gray-200">
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-pulse text-white text-xl">Cargando...</div>
+                </div>
+            </section>
+        )
+    }
+
+    if (heroImages.length === 0) {
+        return null
+    }
 
     return (
         <section className="relative h-[70vh] md:h-[80vh] overflow-hidden">
@@ -38,8 +78,8 @@ function HeroSection() {
                     className="absolute inset-0"
                 >
                     <img
-                        src={HERO_IMAGES[currentImage].url}
-                        alt={HERO_IMAGES[currentImage].alt}
+                        src={heroImages[currentImage].url}
+                        alt={heroImages[currentImage].alt}
                         className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
@@ -63,7 +103,7 @@ function HeroSection() {
             </div>
 
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-                {HERO_IMAGES.map((_, index) => (
+                {heroImages.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => setCurrentImage(index)}
