@@ -56,7 +56,7 @@ function CityNav({ cities, selectedCity, onSelectCity }) {
   }
 
   return (
-    <div className="relative mb-4">
+    <div className="relative mb-4 w-full md:w-auto">
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
@@ -95,15 +95,17 @@ function CityNav({ cities, selectedCity, onSelectCity }) {
         ))}
       </div>
 
-      {canScrollRight && (
-        <button
-          onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors md:hidden"
-        >
-          <Icon icon="mdi:chevron-right" className="w-6 h-6 text-gray-700" />
-        </button>
-      )}
-    </div>
+      {
+        canScrollRight && (
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors md:hidden"
+          >
+            <Icon icon="mdi:chevron-right" className="w-6 h-6 text-gray-700" />
+          </button>
+        )
+      }
+    </div >
   )
 }
 
@@ -145,13 +147,13 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
   const zoom = franchises.length === 1 ? 20 : franchises.length > 1 ? 7 : 8
 
   return (
-    <div className="h-[300px] md:h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
+    <div className="h-[29rem] w-full rounded-2xl overflow-hidden shadow-lg border-gray-200">
       <MapContainer
         ref={mapRef}
         center={getCenter()}
         zoom={zoom}
         scrollWheelZoom={true}
-        className="h-full w-full"
+        className='w-full h-full'
         zIndex={1}
       >
         <TileLayer
@@ -171,25 +173,12 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
               }}
             >
               <Popup>
-                <div className="text-sm min-w-[150px]">
-                  <div className="flex items-center gap-2 mb-1">
-                    {franchise.manager_photo && (
-                      <img
-                        src={franchise.manager_photo}
-                        alt={franchise.manager_name}
-                        className="w-8 h-8 rounded-full object-contain"
-                      />
-                    )}
-                    <p className="font-bold text-base">{franchise.manager_name}</p>
-                  </div>
-                  {franchise.manager_description && (
-                    <p className="text-gray-600 text-xs">{franchise.manager_description}</p>
-                  )}
-                  {franchise.description && (
-                    <p className="text-gray-500 text-xs mt-1">{franchise.description}</p>
-                  )}
+                <div className="text-sm min-w-[140px]">
                   {franchise.city && (
-                    <p className="text-[#492360] font-medium text-xs mt-1">{franchise.city}</p>
+                    <p className="font-semibold text-[#492360] text-xs mb-1">{franchise.city}</p>
+                  )}
+                  {franchise.streets && (
+                    <p className="text-gray-600 text-xs">{franchise.streets}</p>
                   )}
                 </div>
               </Popup>
@@ -204,7 +193,7 @@ function FranchiseMap({ franchises, selectedFranchiseId, onSelectFranchise }) {
 function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
   if (franchises.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[200px]">
+      <div className="w-full h-full flex justify-center items-center rounded-2xl bg-white/80 min-h-[200px] absolute z-20">
         <div className="text-center">
           <Icon icon="mdi:store-off" className="w-12 h-12 text-gray-300 mx-auto mb-2" />
           <p className="text-gray-500 text-sm">No hay franquicias disponibles</p>
@@ -214,7 +203,7 @@ function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
   }
 
   return (
-    <div className="space-y-2 overflow-y-auto max-h-[400px] md:max-h-none pr-2">
+    <div className="space-y-2 overflow-y-auto  h-full md:max-h-none pr-2 absolute z-20 top-2 right-2">
       {franchises.map((franchise) => {
         const isSelected = franchise.id === selectedFranchiseId
         return (
@@ -227,47 +216,13 @@ function FranchiseList({ franchises, selectedFranchiseId, onSelectFranchise }) {
               }`}
           >
             <div className="flex gap-3">
-              <div
-                className={`w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ${isSelected ? 'bg-white/20' : 'bg-gray-100'
-                  }`}
-              >
-                {franchise.manager_photo ? (
-                  <img
-                    src={franchise.manager_photo}
-                    alt={franchise.manager_name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Icon
-                      icon="mdi:account"
-                      className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-gray-400'}`}
-                    />
-                  </div>
-                )}
-              </div>
-
               <div className="flex-1 min-w-0">
-                <h3
-                  className={`font-semibold text-sm truncate ${isSelected ? 'text-white' : 'text-gray-800'
-                    }`}
-                >
-                  {franchise.manager_name}
-                </h3>
-                {franchise.manager_description && (
+                {franchise.streets && (
                   <p
-                    className={`text-xs truncate ${isSelected ? 'text-white/70' : 'text-gray-500'
+                    className={`text-xs truncate ${isSelected ? 'text-white/80' : 'text-gray-600'
                       }`}
                   >
-                    {franchise.manager_description}
-                  </p>
-                )}
-                {franchise.description && (
-                  <p
-                    className={`text-xs truncate ${isSelected ? 'text-white/80' : 'text-gray-400'
-                      }`}
-                  >
-                    {franchise.description}
+                    {franchise.streets}
                   </p>
                 )}
                 {franchise.city && (
@@ -479,10 +434,9 @@ export default function Franquicias() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [citiesData, franchisesData] = await Promise.all([
-          publicApi.getCities(),
-          publicApi.getFranchises()
-        ])
+        const data = await publicApi.getFranchises()
+        const citiesData = data.map(d => d.city)
+        const franchisesData = data.flatMap(d => d.franchises)
         setCities(citiesData || [])
         setFranchises(franchisesData || [])
       } catch (error) {
@@ -494,8 +448,8 @@ export default function Franquicias() {
     fetchData()
   }, [])
 
-  const filteredFranchises = selectedCity 
-    ? franchises.filter(f => f.city && f.city.toLowerCase() === cities.find(c => c.id === selectedCity)?.name?.toLowerCase())
+  const filteredFranchises = selectedCity
+    ? franchises.filter(f => f.city_id === selectedCity)
     : franchises
 
   useEffect(() => {
@@ -567,7 +521,7 @@ export default function Franquicias() {
   return (
     <div className="min-h-screen bg-white">
       <style>{leafletStyles}</style>
-      <section className="py-8 md:py-12 bg-gradient-to-b from-primary/5 to-white">
+      <section className=" py-5 bg-gradient-to-b from-primary/5 to-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-2xl md:text-4xl font-bold text-primary mb-2">
             Nuestras Franquicias
@@ -578,14 +532,14 @@ export default function Franquicias() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 pb-6">
+      <section className="w-full mx-auto px-4 pb-6 flex flex-col justify-center items-center">
         <CityNav
           cities={cities}
           selectedCity={selectedCity}
           onSelectCity={setSelectedCity}
         />
 
-        <div className="grid md:grid-cols-2 gap-4 h-[400px] md:h-[500px]">
+        <div className="flex flex-col w-full md:w-1/2 justify-center items-center relative gap-4 h-auto">
           <FranchiseList
             franchises={filteredFranchises}
             selectedFranchiseId={selectedFranchiseId}
@@ -604,12 +558,12 @@ export default function Franquicias() {
               selectedFranchise.photos.length < 1 ? (
                 <></>
               ) : (<h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Fotos de {selectedFranchise.manager_name}
+                Fotos
               </h3>)
             }
             <PhotoCarousel
               photos={selectedFranchise.photos}
-              franchiseName={selectedFranchise.manager_name}
+              franchiseName={selectedFranchise.city || 'Franquicia'}
               onImageClick={openModal}
             />
           </div>

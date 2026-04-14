@@ -130,19 +130,13 @@ function CityModal({ isOpen, onClose, cities, onSave, onDelete, onUpdate }) {
 
 function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pendingPhotos, onAddPendingPhotos, onRemovePendingPhoto, onDeletePhoto }) {
   const [formData, setFormData] = useState({
-    manager_name: '',
-    description: '',
     city_id: '',
-    manager_photo: '',
-    manager_description: '',
     coordinates: '',
+    streets: '',
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [coordsError, setCoordsError] = useState('')
-  const [imageFile, setImageFile] = useState(null)
-  const [imagePreview, setImagePreview] = useState('')
-  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (editingFranchise) {
@@ -150,26 +144,16 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
         ? `${editingFranchise.latitude},${editingFranchise.longitude}`
         : ''
       setFormData({
-        manager_name: editingFranchise.manager_name || '',
-        description: editingFranchise.description || '',
         city_id: editingFranchise.city_id || '',
-        manager_photo: editingFranchise.manager_photo || '',
-        manager_description: editingFranchise.manager_description || '',
         coordinates: coords,
+        streets: editingFranchise.streets || '',
       })
-      setImagePreview(editingFranchise.manager_photo || '')
-      setImageFile(null)
     } else {
       setFormData({
-        manager_name: '',
-        description: '',
         city_id: cities[0]?.id || '',
-        manager_photo: '',
-        manager_description: '',
         coordinates: '',
+        streets: '',
       })
-      setImagePreview('')
-      setImageFile(null)
     }
   }, [editingFranchise, cities])
 
@@ -197,27 +181,11 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
     }
   }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setImageFile(file)
-      const reader = new FileReader()
-      reader.onload = (e) => setImagePreview(e.target?.result || '')
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleRemoveImage = () => {
-    setImageFile(null)
-    setImagePreview('')
-    setFormData(prev => ({ ...prev, manager_photo: '' }))
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!formData.manager_name.trim()) {
-      setError('El nombre del gerente es requerido')
+    if (!formData.city_id) {
+      setError('La ciudad es requerida')
       return
     }
 
@@ -245,44 +213,20 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
     setSaving(true)
     setError('')
     try {
-      let managerPhotoUrl = formData.manager_photo
-
-      if (imageFile) {
-        if (editingFranchise?.manager_photo) {
-          await deleteImage('ManagerFranchises', editingFranchise.manager_photo)
-        }
-        setUploading(true)
-        managerPhotoUrl = await uploadImage(imageFile, 'ManagerFranchises')
-        setUploading(false)
-        if (!managerPhotoUrl) {
-          setError('Error al subir la foto')
-          setSaving(false)
-          return
-        }
-      }
-
       const franchiseData = {
-        manager_name: formData.manager_name,
-        description: formData.description,
-        city_id: formData.city_id || null,
-        manager_photo: managerPhotoUrl,
-        manager_description: formData.manager_description || null,
+        city_id: formData.city_id,
         latitude,
         longitude,
+        streets: formData.streets || null,
       }
       await onSave(franchiseData)
 
       if (!editingFranchise) {
         setFormData({
-          manager_name: '',
-          description: '',
           city_id: cities[0]?.id || '',
-          manager_photo: '',
-          manager_description: '',
           coordinates: '',
+          streets: '',
         })
-        setImageFile(null)
-        setImagePreview('')
       }
     } catch (err) {
       setError(err.message)
@@ -303,41 +247,31 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Gerente *</label>
-          <input
-            type="text"
-            name="manager_name"
-            value={formData.manager_name}
-            onChange={handleChange}
-            className="w-full px-2 py-1.5 border rounded text-sm"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Dirección</label>
-          <input
-            type="text"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full px-2 py-1.5 border rounded text-sm"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Ciudad</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Ciudad *</label>
           <select
             name="city_id"
             value={formData.city_id}
             onChange={handleChange}
             className="w-full px-2 py-1.5 border rounded text-sm"
+            required
           >
             <option value="">Seleccionar</option>
             {cities.map((city) => (
               <option key={city.id} value={city.id}>{city.name}</option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Ubicación</label>
+          <input
+            type="text"
+            name="streets"
+            value={formData.streets}
+            onChange={handleChange}
+            placeholder="Ej: Ubicada en la Zona Escalón"
+            className="w-full px-2 py-1.5 border rounded text-sm"
+          />
         </div>
 
         <div>
@@ -359,53 +293,13 @@ function FranchiseForm({ cities, onSave, editingFranchise, onCancel, photos, pen
           {coordsError && <p className="text-xs text-red-500 mt-1">{coordsError}</p>}
         </div>
 
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Foto del Gerente</label>
-          <div className="flex flex-col gap-2">
-            {imagePreview ? (
-              <div className="relative w-20 h-20 rounded-lg overflow-hidden border">
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                >
-                  ×
-                </button>
-              </div>
-            ) : (
-              <label className="flex items-center justify-center w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-                <Icon icon="mdi:chevron-down" className="w-6 h-6 text-gray-400 rotate-90" />
-              </label>
-            )}
-            {uploading && <span className="text-xs text-gray-500">Subiendo...</span>}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Descripción</label>
-          <input
-            type="text"
-            name="manager_description"
-            value={formData.manager_description}
-            onChange={handleChange}
-            className="w-full px-2 py-1.5 border rounded text-sm"
-          />
-        </div>
-
         <div className="md:col-span-3 flex gap-2 pt-2">
           <button
             type="submit"
-            disabled={saving || uploading}
+            disabled={saving}
             className="px-4 py-1.5 bg-primary text-white rounded text-sm hover:bg-primary-hover disabled:opacity-50"
           >
-            {saving || uploading ? '...' : editingFranchise ? 'Actualizar' : 'Guardar'}
+            {saving ? '...' : editingFranchise ? 'Actualizar' : 'Guardar'}
           </button>
           {editingFranchise && (
             <button
@@ -453,8 +347,7 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete, filterCity, setF
       <table className="w-full text-sm">
         <thead className="bg-gray-50 sticky top-0">
           <tr>
-            <th className="px-3 py-2 text-left font-semibold text-gray-600">Gerente</th>
-            <th className="px-3 py-2 text-left font-semibold text-gray-600 hidden md:table-cell">Dirección</th>
+            <th className="px-3 py-2 text-left font-semibold text-gray-600">Ubicación</th>
             <th className="px-3 py-2 text-left font-semibold text-gray-600 relative">
               <button
                 onClick={() => setOpenDropdown(!openDropdown)}
@@ -493,8 +386,7 @@ function FranchiseTable({ franchises, cities, onEdit, onDelete, filterCity, setF
         <tbody className="divide-y divide-gray-100">
           {hasFilteredData ? filteredFranchises.map((franchise) => (
             <tr key={franchise.id} className="hover:bg-gray-50">
-              <td className="px-3 py-2">{franchise.manager_name}</td>
-              <td className="px-3 py-2 text-gray-600 hidden md:table-cell">{franchise.description || '-'}</td>
+              <td className="px-3 py-2">{franchise.streets || '-'}</td>
               <td className="px-3 py-2">{getCityName(franchise.city_id)}</td>
               <td className="px-3 py-2 text-xs text-gray-500 hidden md:table-cell">
                 {franchise.latitude && franchise.longitude ? `${franchise.latitude}, ${franchise.longitude}` : '-'}
@@ -586,6 +478,7 @@ function FranchisePhotosManager({ photos, pendingPhotos, onAddPendingPhotos, onR
 export default function Franchises() {
   const [franchises, setFranchises] = useState([])
   const [cities, setCities] = useState([])
+  const [allCities, setAllCities] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingFranchise, setEditingFranchise] = useState(null)
   const [showCityModal, setShowCityModal] = useState(false)
@@ -604,21 +497,22 @@ export default function Franchises() {
 
   const fetchData = async () => {
     try {
-      const [franchisesRes, citiesRes, photosRes] = await Promise.all([
+      const [groupedData, allCitiesData] = await Promise.all([
         privateApi.getFranchises(),
-        privateApi.getCities(),
-        privateApi.getFranchisePhotos(),
+        privateApi.getCities()
       ])
-      const franchisesData = franchisesRes?.data || franchisesRes || []
-      const photosData = photosRes?.data || photosRes || []
+      
+      const citiesWithFranchises = groupedData.map(d => d.city)
+      const allFranchises = groupedData.flatMap(d => d.franchises)
 
-      const franchisesWithPhotos = franchisesData.map(f => ({
+      const franchisesWithPhotos = allFranchises.map(f => ({
         ...f,
-        photos: photosData.filter(p => p.franchise_id === f.id)
+        photos: f.photos || []
       }))
 
       setFranchises(franchisesWithPhotos)
-      setCities(citiesRes?.data || citiesRes || [])
+      setCities(citiesWithFranchises)
+      setAllCities(allCitiesData?.data || allCitiesData || [])
     } catch (err) {
       console.error('Error fetching data:', err)
       setError('Error al cargar datos')
@@ -794,7 +688,7 @@ export default function Franchises() {
 
       <div ref={formRef}>
         <FranchiseForm
-          cities={cities}
+          cities={allCities}
           onSave={handleSaveFranchise}
           editingFranchise={editingFranchise}
           onCancel={handleCancel}
@@ -827,7 +721,7 @@ export default function Franchises() {
       <CityModal
         isOpen={showCityModal}
         onClose={() => setShowCityModal(false)}
-        cities={cities}
+        cities={allCities}
         onSave={handleSaveCity}
         onDelete={handleDeleteCity}
         onUpdate={handleUpdateCity}

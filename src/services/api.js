@@ -37,7 +37,7 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config)
-      
+
       if (response.status === 401) {
         this.clearToken()
         window.dispatchEvent(new CustomEvent('auth:token-expired'))
@@ -109,16 +109,17 @@ export const publicApi = {
     params.push(`available=${available}`)
     return api.getPublic(endpoint + params.join('&'))
   },
-  
+
   getCategories: () => api.getPublic('/public/categories'),
-  
+
   getCities: () => api.getPublic('/public/cities'),
-  
-  getFranchises: (cityId) => 
-    cityId ? api.getPublic(`/public/franchises?city_id=${cityId}`) : api.getPublic('/public/franchises'),
-  
-  getAnnouncements: (active = true) => 
+
+  getFranchises: () => api.getPublic('/public/franchises'),
+
+  getAnnouncements: (active = true) =>
     api.getPublic(`/public/announcements?active=${active}`),
+
+  getHeroImages: () => api.getPublic('/public/hero-images'),
 
   sendContact: (data) => api.postPublic('/public/contact', data),
 }
@@ -156,7 +157,7 @@ export const privateApi = {
   deleteFranchise: (id) => api.deletePrivate(`/private/franchises/${id}`),
 
   // Franchise Photos
-  getFranchisePhotos: (franchiseId) => 
+  getFranchisePhotos: (franchiseId) =>
     franchiseId ? api.getPrivate(`/private/franchise-photos?franchise_id=${franchiseId}`) : api.getPrivate('/private/franchise-photos'),
   createFranchisePhoto: (data) => api.postPrivate('/private/franchise-photos', data),
   updateFranchisePhoto: (id, data) => api.putPrivate(`/private/franchise-photos/${id}`, data),
@@ -166,7 +167,13 @@ export const privateApi = {
   getAnnouncements: () => api.getPrivate('/private/announcements'),
   createAnnouncement: (data) => api.postPrivate('/private/announcements', data),
   updateAnnouncement: (id, data) => api.putPrivate(`/private/announcements/${id}`, data),
-  deleteAnnouncement: (id) => api.deletePrivate(`/private/announcements/${id}`),
+  deleteAnnouncement: (_id) => api.deletePrivate(`/private/announcements/${_id}`),
+
+  // Hero Images
+  getHeroImages: () => api.getPrivate('/private/hero-images'),
+  createHeroImage: (data) => api.postPrivate('/private/hero-images', data),
+  updateHeroImage: (id, data) => api.putPrivate(`/private/hero-images/${id}`, data),
+  deleteHeroImage: (id) => api.deletePrivate(`/private/hero-images/${id}`),
 }
 
 export default api
