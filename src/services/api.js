@@ -116,6 +116,8 @@ export const publicApi = {
 
   getFranchises: () => api.getPublic('/public/franchises'),
 
+  getSalesPoints: () => api.getPublic('/public/sales-points'),
+
   getAnnouncements: (active = true) =>
     api.getPublic(`/public/announcements?active=${active}`),
 
@@ -168,6 +170,12 @@ export const privateApi = {
   createAnnouncement: (data) => api.postPrivate('/private/announcements', data),
   updateAnnouncement: (id, data) => api.putPrivate(`/private/announcements/${id}`, data),
   deleteAnnouncement: (_id) => api.deletePrivate(`/private/announcements/${_id}`),
+
+  // Sales Points
+  getSalesPoints: () => api.getPrivate('/private/sales-points'),
+  createSalesPoint: (data) => api.postPrivate('/private/sales-points', data),
+  updateSalesPoint: (id, data) => api.putPrivate(`/private/sales-points/${id}`, data),
+  deleteSalesPoint: (id) => api.deletePrivate(`/private/sales-points/${id}`),
 
   // Hero Images
   getHeroImages: () => api.getPrivate('/private/hero-images'),

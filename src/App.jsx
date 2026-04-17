@@ -18,6 +18,7 @@ const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
 const AdminProducts = lazy(() => import('./pages/admin/Products'))
 const AdminAnnouncements = lazy(() => import('./pages/admin/Announcements'))
 const AdminFranchises = lazy(() => import('./pages/admin/Franchises'))
+const AdminSalesPoints = lazy(() => import('./pages/admin/SalesPoints'))
 const AdminHeroImages = lazy(() => import('./pages/admin/HeroImages'))
 
 function AdminLoading() {
@@ -74,6 +75,13 @@ function AdminRoutes() {
           <ProtectedRoute>
             <Suspense fallback={<AdminLoading />}>
               <AdminFranchises />
+            </Suspense>
+          </ProtectedRoute>
+        } />
+        <Route path="puntos-de-venta" element={
+          <ProtectedRoute>
+            <Suspense fallback={<AdminLoading />}>
+              <AdminSalesPoints />
             </Suspense>
           </ProtectedRoute>
         } />

@@ -11,6 +11,7 @@ const adminNavLinks = [
   { name: 'Productos', path: '/admin/productos' },
   { name: 'Avisos', path: '/admin/avisos' },
   { name: 'Franquicias', path: '/admin/franquicias' },
+  { name: 'Puntos de Venta', path: '/admin/puntos-de-venta' },
   { name: 'Home Imágenes', path: '/admin/hero-images' },
 ]
 

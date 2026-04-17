@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import SVG from "../../assets/logo.svg?react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'motion/react'
 import { publicApi } from '../../services/api'
@@ -93,14 +94,14 @@ function HeroSection() {
                     transition={{ delay: 0.5, duration: 0.8 }}
                     className="text-center px-4 max-w-4xl"
                 >
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 font-display">
-                        Rey Paletas
-                    </h1>
+                    <div className="text-4xl md:text-6xl lg:text-7xl font-bold fill-white mb-4 font-display">
+                        <SVG className="" />
+                    </div>
                     <p className="text-xl md:text-2xl text-white font-display">
                         {HERO_PHRASE}
                     </p>
                 </motion.div>
-            </div>
+            </div >
 
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
                 {heroImages.map((_, index) => (
@@ -112,7 +113,7 @@ function HeroSection() {
                     />
                 ))}
             </div>
-        </section>
+        </section >
     )
 }
 

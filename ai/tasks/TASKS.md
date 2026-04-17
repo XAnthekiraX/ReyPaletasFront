@@ -112,12 +112,12 @@
 ### Admin Franquicias
 
 - [x] 9.1 Eliminar campos photo, description y name de los datos mostrados en tabla de franquicias
-- [ ] 9.2 Agregar selector de puntos de venta como franquicia con mapa
-- [ ] 9.3 Implementar 2 pestañas: "Obtener un punto de venta" y "Ubicaciones"
+- [x] 9.2 Agregar selector de puntos de venta como franquicia con mapa
+- [x] 9.3 Implementar 2 pestañas: "Obtener un punto de venta" y "Ubicaciones"
 
 ### Public Footer
 
-- [ ] 9.4 Cambiar slogan del footer por "Una delicia real"
+- [x] 9.4 Cambiar slogan del footer por "Una delicia real"
 
 ### Public Hero
 
