@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
+import PartnerCarousel from '../../components/PartnerCarousel'
 import { Icon } from '@iconify/react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import { publicApi } from '../../services/api'
@@ -93,43 +93,6 @@ function BenefitCard({ benefit, index }) {
       <h3 className="text-lg font-bold text-gray-800 mb-2">{benefit.title}</h3>
       <p className="text-gray-600 text-sm leading-relaxed">{benefit.description}</p>
     </motion.div>
-  )
-}
-
-function ContactSection() {
-  return (
-    <section className="py-12 bg-white">
-      <div className="max-w-md mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="bg-gray-50 rounded-2xl p-6 text-center"
-        >
-          <h3 className="text-lg font-bold text-gray-800 mb-4">
-            {contactInfo.title}
-          </h3>
-
-          <div className="space-y-3 mb-6">
-            {contactInfo.items.map((item, index) => (
-              <div key={index} className="flex items-center justify-center gap-2 text-gray-600">
-                <Icon icon={item.icon} className="w-5 h-5 text-primary" />
-                <span>{item.value}</span>
-              </div>
-            ))}
-          </div>
-
-          <Link
-            to="/contactanos"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-quaternary/80 text-white rounded-xl font-medium hover:bg-quaternary transition-colors"
-          >
-            <Icon icon="tabler:mail" className="w-5 h-5" />
-            Contáctanos
-          </Link>
-        </motion.div>
-      </div>
-    </section>
   )
 }
 
@@ -406,8 +369,8 @@ function TabToggle({ activeTab, onChangeTab }) {
 function InfoContent() {
   return (
     <>
-      <section className="px-5 py-4 ">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <section className="px-5 py-4">
+        <div className="max-w-4xl mx-auto px-4 text-center  ">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -435,13 +398,13 @@ function InfoContent() {
         </div>
       </section>
 
-      <section className="py-3">
+      <section className="py-10">
         <div className="max-w-md mx-auto px-4">
           <VideoSection />
         </div>
       </section>
 
-      <section className="py-12 bg-gray-50">
+      <section className="py-10 bg-secondary w-full ">
         <div className="max-w-5xl mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -460,7 +423,7 @@ function InfoContent() {
         </div>
       </section>
 
-      <ContactSection />
+      <PartnerCarousel />
     </>
   )
 }
